@@ -1,32 +1,37 @@
-# Lessons Learned - GitHub Cleanup Session
-**Date:** 2026-01-18
+# CI/CD & GitHub Actions
 
-## CI/CD Fixes
-
-### 1. Python Dependency Conflicts (Gorgon)
-**Problem:** `starlette>=0.52.0` conflicted with `fastapi>=0.128.0` (requires starlette<0.51.0)
-
-**Solution:** Remove explicit starlette version from requirements.txt - let FastAPI manage its own starlette dependency.
+Patterns and fixes for continuous integration.
 
 ---
 
-### 2. Firebase Initialization in CI (Chefwise)
-**Problem:** `Firebase: Error (auth/invalid-api-key)` during Next.js build in CI where env vars aren't set.
+## Python Dependency Conflicts
 
-**Solution:** Check for API key before initializing Firebase:
+**Problem:** Explicit sub-dependency versions conflict with framework requirements.
+
+**Example:** `starlette>=0.52.0` conflicted with `fastapi>=0.128.0` (requires starlette<0.51.0)
+
+**Solution:** Let frameworks manage their own dependencies. Remove explicit versions of sub-dependencies from requirements.txt.
+
+---
+
+## Firebase Initialization in CI
+
+**Problem:** `Firebase: Error (auth/invalid-api-key)` during build when env vars aren't set.
+
+**Solution:** Guard initialization:
 ```javascript
 const canInitialize = !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 export const app = canInitialize ? initializeApp(firebaseConfig) : null;
 export const auth = app ? getAuth(app) : null;
-// ... etc for other services
 ```
 
 ---
 
-### 3. PyGObject Installation in CI (LikX)
+## PyGObject Installation
+
 **Problem:** System packages (`python3-gi`) not available to `actions/setup-python` Python.
 
-**Solution:** Install via pip with build dependencies:
+**Solution:**
 ```yaml
 - name: Install system dependencies
   run: |
@@ -45,16 +50,17 @@ export const auth = app ? getAuth(app) : null;
 
 ---
 
-### 4. Headless GUI Testing (LikX, Argus_Overview)
+## Headless GUI Testing
+
 **Problem:** GTK/Qt tests fail without display in CI.
 
-**Solution:** Use xvfb (X Virtual Framebuffer):
+**Solution:**
 ```yaml
 - run: sudo apt-get install -y xvfb
 - run: xvfb-run -a pytest tests/
 ```
 
-For Qt apps, also set:
+For Qt apps:
 ```yaml
 env:
   QT_QPA_PLATFORM: offscreen
@@ -62,22 +68,23 @@ env:
 
 ---
 
-### 5. pynput X11 Connection Errors (Argus_Overview)
-**Problem:** `Xlib.error.ConnectionClosedError` - pynput keyboard.Listener needs real X11 even with xvfb.
+## pynput X11 Errors
+
+**Problem:** `Xlib.error.ConnectionClosedError` - pynput keyboard.Listener needs real X11.
 
 **Solution:** Mock the listener in tests:
 ```python
 with patch("module.keyboard.Listener"):
     widget._start_recording()
-    # test assertions
 ```
 
 ---
 
-### 6. Temp Directory Fallback for Shared Paths (vdc-logistics, vdc-portfolio)
-**Problem:** `PermissionError` when trying to create `/shared_data/` directory in CI.
+## Temp Directory Fallback
 
-**Solution:** Add fallback to temp directory:
+**Problem:** `PermissionError` when creating paths like `/shared_data/` in CI.
+
+**Solution:**
 ```python
 import tempfile
 
@@ -96,21 +103,22 @@ def _get_default_path() -> Path:
 
 ---
 
-### 7. Locale Differences in CI (LikX)
+## Locale Differences
+
 **Problem:** Tests expected 2-char language codes but CI returns `'C'` locale.
 
-**Solution:** Update assertions to handle minimal locale:
+**Solution:**
 ```python
 def test_returns_language_code(self):
     result = get_system_language()
-    # Accept 'C' in minimal CI environments
-    assert result.islower() or result == "C"
+    assert result.islower() or result == "C"  # Accept 'C' in minimal CI
 ```
 
 ---
 
-### 8. Ruff Formatting Issues (Gorgon, Argus_Overview, RedOPS)
-**Problem:** CI fails on `ruff format --check` after new code is added.
+## Ruff Formatting
+
+**Problem:** CI fails on `ruff format --check`.
 
 **Solution:** Always run before committing:
 ```bash
@@ -123,20 +131,18 @@ ruff format .
 ## Dependabot Management
 
 ### Rebasing Stale PRs
-When merging multiple Dependabot PRs that touch the same files (e.g., package-lock.json), later PRs get conflicts.
-
-**Solution:** Request rebases via comment:
+When merging multiple Dependabot PRs that touch the same files:
 ```
 @dependabot rebase
 ```
 
 ### Safe vs Risky Updates
 - **Safe to auto-merge:** Minor/patch versions, CI action updates
-- **Review first:** Major version bumps (check breaking changes, verify CI passes)
+- **Review first:** Major version bumps
 
 ---
 
-## GitHub CLI Commands Reference
+## GitHub CLI Commands
 
 ```bash
 # List failing CI
@@ -153,17 +159,18 @@ gh pr comment NUM --repo OWNER/REPO --body "@dependabot rebase"
 
 # Delete remote branch
 gh api -X DELETE repos/OWNER/REPO/git/refs/heads/BRANCH_NAME
-
-# Search open PRs
-gh search prs --owner OWNER --state open --author "app/dependabot"
 ```
 
 ---
 
-## Key Takeaways
+## Key Principles
 
-1. **CI environments are minimal** - Don't assume system packages, displays, or writable paths exist
-2. **Mock external dependencies** - pynput, Firebase, etc. should be mocked in CI tests
+1. **CI environments are minimal** - Don't assume system packages, displays, or writable paths
+2. **Mock external dependencies** - pynput, Firebase, etc. should be mocked in CI
 3. **Let frameworks manage sub-dependencies** - Don't pin starlette if using FastAPI
 4. **Run formatters locally** - Catch ruff/prettier issues before pushing
-5. **Batch Dependabot merges carefully** - Merge one at a time or request rebases after conflicts
+5. **Batch Dependabot merges carefully** - Merge one at a time or request rebases
+
+---
+
+*Last updated: 2026-01-18*
