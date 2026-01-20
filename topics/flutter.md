@@ -215,4 +215,50 @@ void main() async {
 
 ---
 
+## iOS Build Preparation
+
+### Setup Script Pattern
+
+Create `scripts/setup-ios.sh` for Mac automation:
+- Check prerequisites (flutter, xcode, cocoapods)
+- Generate platform files (`flutter create .`)
+- Configure bundle ID
+- Prompt for Firebase config
+- Auto-configure Google Sign-In URL scheme from plist
+- Install dependencies
+
+### Makefile Targets
+
+```makefile
+setup:        # Run setup script
+deps:         # flutter pub get
+deps-ios:     # pod install
+build-ios:    # flutter build ios --debug
+release-ios:  # flutter build ios --release
+run-ios:      # flutter run -d ios
+xcode:        # open ios/Runner.xcworkspace
+clean:        # flutter clean
+```
+
+### Key iOS Configuration
+
+```bash
+# Minimum iOS for Firebase
+# In ios/Podfile:
+platform :ios, '13.0'
+
+# Google Sign-In URL scheme (in Info.plist)
+# Use REVERSED_CLIENT_ID from GoogleService-Info.plist
+```
+
+### Xcode Signing Quick Reference
+
+| Scenario | Action |
+|----------|--------|
+| Simulator only | Uncheck "Automatically manage signing" |
+| Device testing | Check auto-sign, select free team |
+| App Store | Check auto-sign, select paid team ($99/yr) |
+
+---
+
 *Last updated: 2026-01-19*
