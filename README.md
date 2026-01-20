@@ -40,8 +40,7 @@ Living documentation for AI-assisted development. Shared reference between Claud
 | Flutter & Firebase | [topics/flutter.md](topics/flutter.md) |
 | Frontend Patterns | [topics/frontend.md](topics/frontend.md) |
 | Git Workflow | [topics/git.md](topics/git.md) |
-| Python | [topics/python.md](topics/python.md) |
-| Rust | [topics/rust.md](topics/rust.md) |
+| Python & pytest | [topics/python.md](topics/python.md) |
 | Security | [topics/security.md](topics/security.md) |
 
 ### Decision Log
@@ -77,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-19 | G13_Linux: Fixed 4 TODOs + test bugs, project now feature-complete |
 | 2026-01-19 | Chefwise mobile: Full Firebase integration (Auth, Firestore, Cloud Functions) in one session |
 | 2026-01-18 | Gorgon Notion integration: full CRUD client + 3 workflows + 26 tests |
 | 2026-01-18 | All 7 Gorgon frontend pages in one session |
@@ -96,6 +96,8 @@ Chronological record of work sessions.
 | Pre-interview cramming | No studying after midnight |
 | Project sprawl | 4 flagship projects max |
 | gitignore `lib/` blocks nested dirs | Use `/lib/` for root-only, not `lib/` |
+| pytest --cov uses massive memory | Use `--no-cov` for quick runs, coverage in CI only |
+| Tests hang on mocked code | Verify patch target matches actual import path |
 
 ---
 
