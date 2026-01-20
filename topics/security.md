@@ -120,6 +120,23 @@ cargo audit
 ### Dependabot
 Enable in GitHub: Settings > Security > Dependabot alerts
 
+### npm Overrides for Transitive Dependencies
+
+When a vulnerability exists in a transitive dependency that the direct dependency hasn't updated yet:
+
+```json
+// package.json
+{
+  "overrides": {
+    "tar": "^7.5.4"  // Force version across all dependencies
+  }
+}
+```
+
+Then run `npm install` to apply. Verify with `npm ls <package>`.
+
+**Use case:** `@capacitor/cli` depends on `tar@^6.1.11` (vulnerable). Override forces `tar@7.5.4` (patched) without waiting for Capacitor to update.
+
 ---
 
 ## CI/CD Security
@@ -177,4 +194,4 @@ Before shipping:
 
 ---
 
-*Last updated: 2026-01-18*
+*Last updated: 2026-01-19*

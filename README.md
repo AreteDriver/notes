@@ -37,6 +37,7 @@ Living documentation for AI-assisted development. Shared reference between Claud
 | Topic | File |
 |-------|------|
 | CI/CD & GitHub Actions | [topics/ci-cd.md](topics/ci-cd.md) |
+| Flutter & Firebase | [topics/flutter.md](topics/flutter.md) |
 | Frontend Patterns | [topics/frontend.md](topics/frontend.md) |
 | Git Workflow | [topics/git.md](topics/git.md) |
 | Python | [topics/python.md](topics/python.md) |
@@ -76,6 +77,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-19 | Chefwise mobile: Full Firebase integration (Auth, Firestore, Cloud Functions) in one session |
 | 2026-01-18 | Gorgon Notion integration: full CRUD client + 3 workflows + 26 tests |
 | 2026-01-18 | All 7 Gorgon frontend pages in one session |
 | 2026-01-18 | Fixed CI across 6 repos in parallel |
@@ -93,6 +95,7 @@ Chronological record of work sessions.
 | Accepting untested code | "Touch it locally" rule before commit |
 | Pre-interview cramming | No studying after midnight |
 | Project sprawl | 4 flagship projects max |
+| gitignore `lib/` blocks nested dirs | Use `/lib/` for root-only, not `lib/` |
 
 ---
 
@@ -132,4 +135,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-18*
+*Last updated: 2026-01-19*
