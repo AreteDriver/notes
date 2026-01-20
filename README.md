@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-20 | Gorgon: Workflow versioning feature complete + 86 new tests (28 API, 58 unit) |
 | 2026-01-19 | G13_Linux: Fixed 4 TODOs + test bugs, project now feature-complete |
 | 2026-01-19 | Chefwise mobile: Full Firebase integration (Auth, Firestore, Cloud Functions) in one session |
 | 2026-01-18 | Gorgon Notion integration: full CRUD client + 3 workflows + 26 tests |
@@ -98,6 +99,9 @@ Chronological record of work sessions.
 | gitignore `lib/` blocks nested dirs | Use `/lib/` for root-only, not `lib/` |
 | pytest --cov uses massive memory | Use `--no-cov` for quick runs, coverage in CI only |
 | Tests hang on mocked code | Verify patch target matches actual import path |
+| FastAPI route not matching | Static paths (`/versions/compare`) must be defined before dynamic (`/versions/{version}`) |
+| Module-level dict not patched | Use `patch.dict("module._DICT", {...})` instead of patching functions |
+| Test needs DB table that's mocked | Run actual migrations before mocking `run_migrations` in lifespan |
 
 ---
 
@@ -137,4 +141,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-19*
+*Last updated: 2026-01-20*
