@@ -221,4 +221,50 @@ git commit -m "chore: stop tracking filename"
 
 ---
 
-*Last updated: 2026-01-18*
+## Dotfiles with Git Bare Repo
+
+Manage dotfiles without symlinks. Files stay in `$HOME`, tracked by bare repo.
+
+### Setup
+```bash
+# Initialize bare repo
+git init --bare ~/.dotfiles
+
+# Add alias (add to .bashrc/.zshrc)
+alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
+# Hide untracked files (essential)
+dotfiles config --local status.showUntrackedFiles no
+
+# Add files
+dotfiles add ~/.bashrc ~/.gitconfig
+dotfiles commit -m "feat: initial dotfiles"
+dotfiles remote add origin git@github.com:user/dotfiles.git
+dotfiles push -u origin main
+```
+
+### Clone to New Machine
+```bash
+git clone --bare https://github.com/user/dotfiles.git $HOME/.dotfiles
+alias dotfiles='git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
+
+# Backup existing files, then checkout
+mkdir -p ~/.dotfiles-backup
+dotfiles checkout 2>&1 | grep -E "\s+\." | awk '{print $1}' | \
+  xargs -I{} mv {} ~/.dotfiles-backup/{}
+dotfiles checkout
+
+dotfiles config --local status.showUntrackedFiles no
+```
+
+### Daily Usage
+```bash
+dotfiles status
+dotfiles add ~/.new-config
+dotfiles commit -m "feat: add new config"
+dotfiles push
+```
+
+---
+
+*Last updated: 2026-01-24*

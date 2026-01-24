@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-24 | Dotfiles: Migrated to git bare repo, 90 files tracked, nvim/lazygit/kitty configs |
 | 2026-01-20 | Gorgon: Workflow versioning feature complete + 86 new tests (28 API, 58 unit) |
 | 2026-01-19 | G13_Linux: Fixed 4 TODOs + test bugs, project now feature-complete |
 | 2026-01-19 | Chefwise mobile: Full Firebase integration (Auth, Firestore, Cloud Functions) in one session |
@@ -102,6 +103,7 @@ Chronological record of work sessions.
 | FastAPI route not matching | Static paths (`/versions/compare`) must be defined before dynamic (`/versions/{version}`) |
 | Module-level dict not patched | Use `patch.dict("module._DICT", {...})` instead of patching functions |
 | Test needs DB table that's mocked | Run actual migrations before mocking `run_migrations` in lifespan |
+| nvim treesitter-textobjects loop error | Add `init` function to disable RTP plugin loading at startup (see dotfiles) |
 
 ---
 
@@ -141,4 +143,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-20*
+*Last updated: 2026-01-24*
