@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-24 | VDC Portfolio: Test coverage 84%→89%, Docker verified, CI green |
 | 2026-01-24 | Dotfiles: Migrated to git bare repo, 90 files tracked, nvim/lazygit/kitty configs |
 | 2026-01-20 | Gorgon: Workflow versioning feature complete + 86 new tests (28 API, 58 unit) |
 | 2026-01-19 | G13_Linux: Fixed 4 TODOs + test bugs, project now feature-complete |

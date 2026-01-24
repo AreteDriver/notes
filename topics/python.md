@@ -113,7 +113,35 @@ myapp-gui = "mypackage.gui:main"
 | `MagicMock().method` vs `MagicMock.method` | Former is instance, latter is class |
 | pytest fixtures not found | Check conftest.py location |
 | Coverage excludes files | Check `[tool.coverage.run]` source setting |
+| `datetime.utcnow()` deprecated (Python 3.12+) | Use `datetime.now(timezone.utc)` |
 
 ---
 
-*Last updated: 2026-01-19*
+## Datetime Deprecation (Python 3.12+)
+
+`datetime.utcnow()` is deprecated and will be removed in Python 3.14.
+
+```python
+# OLD (deprecated)
+from datetime import datetime
+timestamp = datetime.utcnow()
+
+# NEW (timezone-aware)
+from datetime import datetime, timezone
+timestamp = datetime.now(timezone.utc)
+```
+
+For ISO format strings:
+```python
+# OLD
+datetime.utcnow().isoformat() + "Z"
+
+# NEW
+datetime.now(timezone.utc).isoformat()  # Includes +00:00
+# Or for explicit Z suffix:
+datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+```
+
+---
+
+*Last updated: 2026-01-24*
