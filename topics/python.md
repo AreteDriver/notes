@@ -411,6 +411,26 @@ def handler(**kwargs):
 
 **Solution:** Use temporary directories or cleanup in test fixtures.
 
+### Mock Paths During Migration
+
+**Problem:** After migrating from `OldClass` to `NewAdapter`, tests fail because mocks still patch `OldClass`.
+
+**Error:** `AttributeError: <module 'mymodule'> does not have the attribute 'OldClass'`
+
+**Solution:** Update all test mock paths to match new imports:
+
+```python
+# Before migration
+with patch("mymodule.OldClass") as mock:
+    ...
+
+# After migration (module imports NewAdapter now)
+with patch("mymodule.NewAdapter") as mock:
+    ...
+```
+
+**Tip:** Use `grep -r "OldClass" tests/` to find all mocks that need updating.
+
 ---
 
 *Last updated: 2026-01-25*
