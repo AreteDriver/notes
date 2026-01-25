@@ -337,6 +337,56 @@ def _get_semaphores(self):
     return self._semaphores
 ```
 
+### Adaptive Rate Limit Recovery
+
+**Problem:** Multiplicative recovery can fail to increase at low values.
+
+```python
+# WRONG - int(3 * 1.2) = 3, no increase
+new_limit = int(current_limit * recovery_factor)
+
+# CORRECT - guarantee at least +1 increase
+new_limit = min(
+    base_limit,
+    max(current_limit + 1, int(current_limit * recovery_factor)),
+)
+```
+
+### Cross-Process Rate Limiting with SQLite
+
+**Pattern:** Use SQLite with exclusive locking for multi-process coordination.
+
+```python
+class SQLiteRateLimiter:
+    def _acquire_sync(self, key: str, limit: int, window_seconds: int):
+        window_start = int(time.time() // window_seconds) * window_seconds
+
+        conn = sqlite3.connect(self._db_path, timeout=10.0, isolation_level="EXCLUSIVE")
+        try:
+            # Atomic upsert
+            cursor = conn.execute("""
+                UPDATE rate_limits SET count = count + 1
+                WHERE key = ? AND window_start = ?
+                RETURNING count
+            """, (key, window_start))
+            row = cursor.fetchone()
+            if not row:
+                conn.execute("INSERT INTO rate_limits VALUES (?, ?, 1)", (key, window_start))
+                current = 1
+            else:
+                current = row[0]
+            conn.commit()
+        finally:
+            conn.close()
+
+        return current <= limit
+```
+
+**Key points:**
+- `isolation_level="EXCLUSIVE"` ensures cross-process safety
+- `timeout=10.0` handles lock contention
+- Sliding window: `int(time.time() // window_seconds) * window_seconds`
+
 ---
 
 ## Deprecation Patterns
