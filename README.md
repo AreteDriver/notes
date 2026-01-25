@@ -76,6 +76,10 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | EVE_Gatekeeper: Ship-type risk profiles (8 profiles, security/kill multipliers, 15 tests) |
+| 2026-01-25 | EVE_Gatekeeper: Discord/Slack webhook alerts (subscriptions, rich formatting, 36 tests) |
+| 2026-01-25 | EVE_Gatekeeper: Route history endpoint (deque cache, auto-log on calculation, 9 tests) |
+| 2026-01-25 | EVE_Gatekeeper: Public zkill stats API (single/bulk/hot endpoints, 14 tests) |
 | 2026-01-25 | EVE_Gatekeeper: Route bookmarks feature (CRUD API, 30 tests, 99% coverage) |
 | 2026-01-25 | EVE_Gatekeeper: 122 new tests, coverage 69%→90% (character, cache, token_store, zkill_stats, database, status, logging) |
 | 2026-01-25 | EVE_Sentinel: WalletAnalyzer (RMT detection) + ActivityAnalyzer (TZ/engagement), 36 new tests |
@@ -124,6 +128,8 @@ Chronological record of work sessions.
 | GTK code tests fail without display | Test class structure/methods with `hasattr()`, check source with `inspect.getsource()` |
 | Tests pass alone but fail in suite | Cached data from other tests affects results - don't assert specific values that depend on shared cache state |
 | Patching httpx in FastAPI endpoint | httpx imported inside function - patch at httpx module level, not endpoint module. Or use respx library for cleaner HTTP mocking |
+| FastAPI Query() defaults in tests | Query(24) returns Query object when called directly - pass params explicitly in tests: `func(hours=24)` |
+| Function named `test_*` collected by pytest | Rename non-test functions to avoid `test_` prefix (e.g., `send_test_message` not `test_webhook`) |
 
 ---
 
@@ -163,4 +169,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-25 (Session 3)*
+*Last updated: 2026-01-25 (Session 4)*
