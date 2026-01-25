@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | EVE_Gatekeeper: 90 new tests, coverage 80%→89% (character, cache, token_store, zkill_stats, database) |
 | 2026-01-25 | EVE_Sentinel: WalletAnalyzer (RMT detection) + ActivityAnalyzer (TZ/engagement), 36 new tests |
 | 2026-01-25 | EVE_Gatekeeper: AI route analysis with DangerLevel classification, 43 new tests |
 | 2026-01-25 | LikX: 300+ new tests across 8 modules (minimap, onboarding, quick_actions, undo_history, history, queue, recorder, scroll_capture) |
@@ -121,6 +122,7 @@ Chronological record of work sessions.
 | `tempfile.mktemp()` race condition | Use `tempfile.mkstemp()` - creates file atomically, returns (fd, path) |
 | GTK code tests fail without display | Test class structure/methods with `hasattr()`, check source with `inspect.getsource()` |
 | Tests pass alone but fail in suite | Cached data from other tests affects results - don't assert specific values that depend on shared cache state |
+| Patching httpx in FastAPI endpoint | httpx imported inside function - patch at httpx module level, not endpoint module. Or use respx library for cleaner HTTP mocking |
 
 ---
 
