@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | EVE_Gatekeeper: AI route analysis with DangerLevel classification, 43 new tests |
 | 2026-01-25 | LikX: 300+ new tests across 8 modules (minimap, onboarding, quick_actions, undo_history, history, queue, recorder, scroll_capture) |
 | 2026-01-25 | LikX v3.30.0: Minimap, onboarding, quick actions, undo history + security fixes |
 | 2026-01-25 | RedOPS: Plugin system integration, Shodan/Censys intel modules, 49+ new tests |
@@ -118,6 +119,7 @@ Chronological record of work sessions.
 | Test class named `Test*` collected by pytest | Rename sample classes to `Sample*` to avoid pytest collection warnings |
 | `tempfile.mktemp()` race condition | Use `tempfile.mkstemp()` - creates file atomically, returns (fd, path) |
 | GTK code tests fail without display | Test class structure/methods with `hasattr()`, check source with `inspect.getsource()` |
+| Tests pass alone but fail in suite | Cached data from other tests affects results - don't assert specific values that depend on shared cache state |
 
 ---
 
