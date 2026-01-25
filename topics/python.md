@@ -339,4 +339,78 @@ def _get_semaphores(self):
 
 ---
 
+## Deprecation Patterns
+
+### Deprecation Warning with Guidance
+
+**Pattern:** Emit warnings that guide users to the replacement.
+
+```python
+import warnings
+
+class OldClass:
+    def __init__(self):
+        warnings.warn(
+            "OldClass is deprecated. Use NewClass from module.new instead. "
+            "NewClass provides X, Y, Z improvements.",
+            DeprecationWarning,
+            stacklevel=2,  # Point to caller, not this line
+        )
+```
+
+### Adapter for Incremental Migration
+
+**Pattern:** Wrap new implementation with old interface for gradual migration.
+
+```python
+class OldEngineAdapter:
+    """Provides OldEngine interface using NewExecutor internally."""
+
+    def __init__(self):
+        self._executor = NewExecutor()
+
+    def old_method(self, old_obj: OldFormat) -> OldResult:
+        # Convert old format to new
+        new_config = convert_old_to_new(old_obj)
+
+        # Execute with new implementation
+        new_result = self._executor.execute(new_config)
+
+        # Convert result back to old format
+        return convert_result_to_old(new_result)
+```
+
+**Benefits:**
+- Same interface = minimal changes at call sites
+- Migrate one file at a time
+- Deprecation warnings guide without breaking
+
+---
+
+## Testing Patterns
+
+### Kwargs Passthrough in Handlers
+
+**Problem:** Dynamic executors may pass extra kwargs to handlers.
+
+```python
+# WRONG - fails if executor adds kwargs
+def handler():
+    return "done"
+
+# CORRECT - accept and ignore extra kwargs
+def handler(**kwargs):
+    return "done"
+```
+
+### Test File Side Effects
+
+**Problem:** Adding files to directories scanned at startup can break tests.
+
+**Example:** Adding `test-workflow.yaml` to a workflows directory that's auto-imported on app startup causes tests expecting empty state to fail.
+
+**Solution:** Use temporary directories or cleanup in test fixtures.
+
+---
+
 *Last updated: 2026-01-25*
