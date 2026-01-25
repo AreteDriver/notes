@@ -177,3 +177,38 @@ Specific task → Related maintenance → Cross-repo sweep → Polish → Done
 4. **Profile README is code** - Treat broken links like bugs
 5. **Batch similar operations** - Merge all CI bumps together, all security patches together
 6. **Major version bumps need testing** - Don't auto-merge next.js, electron, stripe major versions
+
+---
+
+## GameSpace Phase 1-2 Session (Evening)
+
+### Completed
+1. **Phase 1 Implementation** - Scoring engine, ESPN integration, 77 tests
+2. **Fly.io Deployment** - API live at `api-bold-voice-3664.fly.dev`
+3. **Mobile API Config** - Production URL configured, Sport type casing fixed
+4. **Streaming + Caching** - SSE endpoint, 1hr TTL cache with stats
+5. **App Store Docs** - Comprehensive setup guide created
+
+### Key Decisions
+- **Fly.io over Railway** - Railway's CLI had linking issues; Fly worked smoothly
+- **In-memory cache** - TTLCache for Claude responses (1hr, 100 entries)
+- **SSE for streaming** - Server-Sent Events for `/decide/stream` endpoint
+- **Deferred Postgres** - API doesn't use DB yet; no point adding until needed
+
+### Patterns That Worked
+- Lazy imports in `__init__.py` to avoid forcing sqlalchemy dependency on tests
+- Import directly from `services.espn` instead of `api.services.espn` in tests
+- Using `flyctl deploy` from the Dockerfile directory (src/api)
+
+### Gotchas
+- Railway `railway link` doesn't persist in non-interactive mode
+- Fly requires card on file even for free tier
+- Expo Sport type needed lowercase (`'nba'` not `'NBA'`)
+- iOS deploymentTarget needed bump to 15.1 for expo-build-properties
+
+### Files Modified
+- `src/api/services/claude.py` - Added caching + streaming
+- `src/api/main.py` - Added `/decide/stream`, `/cache/*` endpoints
+- `src/mobile/.env` - Production API URL
+- `src/mobile/src/services/purchases.ts` - Fixed sport casing
+- `docs/APP_STORE_SETUP.md` - Complete setup guide
