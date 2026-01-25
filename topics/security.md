@@ -194,4 +194,115 @@ Before shipping:
 
 ---
 
-*Last updated: 2026-01-19*
+## Shell History Protection
+
+Secrets can leak into shell history. Prevent with HISTIGNORE.
+
+### Bash (~/.bashrc)
+```bash
+export HISTIGNORE="*API_KEY*:*TOKEN*:*SECRET*:*PASSWORD*:*CREDENTIAL*:*sk-ant-*:*sk-proj-*:*ghp_*:*pypi-*:*AKIA*"
+```
+
+### Zsh (~/.zshrc)
+```bash
+HISTORY_IGNORE="(*API_KEY*|*TOKEN*|*SECRET*|*PASSWORD*|*CREDENTIAL*|*sk-ant-*|*sk-proj-*|*ghp_*|*pypi-*|*AKIA*)"
+```
+
+### Clean Existing History
+```bash
+# Remove lines containing secrets
+sed -i '/sk-ant-\|sk-proj-\|ghp_\|AKIA\|pypi-/d' ~/.zsh_history ~/.bash_history
+```
+
+---
+
+## Security Audit Tools
+
+### gitleaks - Secret Scanner
+```bash
+# Install
+curl -sL -o /tmp/gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v8.18.4/gitleaks_8.18.4_linux_x64.tar.gz"
+cd /tmp && tar xzf gitleaks.tar.gz && mv gitleaks ~/.local/bin/
+
+# Scan git repo (respects .gitignore)
+gitleaks detect
+
+# Scan directory (all files)
+gitleaks detect --no-git
+
+# Verbose output
+gitleaks detect -v
+```
+
+### pip-audit - Python Vulnerability Scanner
+```bash
+# Install
+pipx install pip-audit
+
+# Scan current environment
+pip-audit
+
+# Scan requirements file
+pip-audit -r requirements.txt
+```
+
+---
+
+## File Permissions Checklist
+
+| Path | Required | Check |
+|------|----------|-------|
+| `~/.ssh/` | 700 | `chmod 700 ~/.ssh` |
+| `~/.ssh/id_*` (private) | 600 | `chmod 600 ~/.ssh/id_ed25519` |
+| `~/.ssh/config` | 600 | `chmod 600 ~/.ssh/config` |
+| `~/.gnupg/` | 700 | `chmod 700 ~/.gnupg` |
+| `~/.aws/credentials` | 600 | `chmod 600 ~/.aws/credentials` |
+| `.env` files | 600 | `chmod 600 .env` |
+
+### Find World-Writable Files
+```bash
+find ~ -type f -perm -002 2>/dev/null
+```
+
+---
+
+## Secret Patterns Reference
+
+| Pattern | Service |
+|---------|---------|
+| `sk-ant-api03-*` | Anthropic API |
+| `sk-proj-*`, `sk-*` | OpenAI API |
+| `ghp_*` | GitHub PAT |
+| `gho_*` | GitHub OAuth |
+| `AKIA*` | AWS Access Key |
+| `pypi-*` | PyPI Token |
+| `npm_*` | npm Token |
+| `-----BEGIN * PRIVATE KEY-----` | Private keys |
+
+---
+
+## System Audit Quick Commands
+
+```bash
+# Check SSH permissions
+ls -la ~/.ssh/
+
+# Check for exposed secrets in history
+grep -E 'sk-ant-|sk-proj-|ghp_|AKIA' ~/.zsh_history ~/.bash_history
+
+# Scan git repos for secrets
+gitleaks detect
+
+# Check Python dependencies
+pip-audit
+
+# Find world-writable files
+find ~ -type f -perm -002 2>/dev/null
+
+# Check sensitive file permissions
+stat -c '%a %n' ~/.ssh/id_* ~/.gnupg/private-keys-v1.d/* 2>/dev/null
+```
+
+---
+
+*Last updated: 2026-01-24*
