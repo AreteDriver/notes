@@ -72,6 +72,88 @@ def test_event_loop():
     # Test will exit after 3 iterations
 ```
 
+### Async Generator Exception Testing
+
+**Problem:** Testing exception handling in async generators that use `async for`.
+
+**Wrong approach:** `async for` doesn't properly test exception paths.
+
+**Correct approach:** Use generator's `athrow` method:
+
+```python
+async def test_generator_rollback_on_exception():
+    gen = get_db()  # Returns async generator
+    session = await gen.__anext__()  # Get yielded session
+
+    # Inject exception into generator
+    with pytest.raises(ValueError):
+        await gen.athrow(ValueError("test error"))
+
+    # Now verify rollback was called
+    session.rollback.assert_called_once()
+```
+
+### AsyncMock vs MagicMock for Context Managers
+
+**Problem:** `AsyncMock` coroutine doesn't support async context manager protocol.
+
+**Error:** `TypeError: 'coroutine' object does not support the async context manager protocol`
+
+**Solution:** Use `MagicMock` for the context manager, `AsyncMock` for the async methods:
+
+```python
+# WRONG
+mock_engine = AsyncMock()
+mock_engine.begin.return_value = mock_context  # Coroutine, not context manager
+
+# CORRECT
+mock_context = MagicMock()
+mock_context.__aenter__ = AsyncMock(return_value=mock_conn)
+mock_context.__aexit__ = AsyncMock(return_value=None)
+
+mock_engine = MagicMock()
+mock_engine.begin.return_value = mock_context  # Proper async context manager
+```
+
+### Mocking httpx.AsyncClient
+
+**Pattern for testing code that uses httpx:**
+
+```python
+async def test_httpx_call():
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"data": "test"}
+    mock_response.raise_for_status = MagicMock()
+
+    mock_client = AsyncMock()
+    mock_client.get.return_value = mock_response
+    mock_client.__aenter__.return_value = mock_client
+    mock_client.__aexit__.return_value = None
+
+    with patch("mymodule.httpx.AsyncClient", return_value=mock_client):
+        result = await fetch_data()
+        assert result == {"data": "test"}
+```
+
+### Mocking Redis with Byte Strings
+
+**Problem:** Redis returns byte strings, not regular strings.
+
+```python
+@pytest.fixture
+def mock_redis():
+    mock = AsyncMock()
+    # Redis returns bytes
+    mock.hgetall.return_value = {
+        b"character_id": b"12345",
+        b"access_token": b"token",
+        b"refresh_token": b"refresh",
+    }
+    mock.get.return_value = b'{"cached": "data"}'
+    return mock
+```
+
 ---
 
 ## Project Structure
@@ -170,4 +252,4 @@ pdf.set_font("DejaVu", size=12)
 
 ---
 
-*Last updated: 2026-01-24*
+*Last updated: 2026-01-25*
