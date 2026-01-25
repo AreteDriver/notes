@@ -76,6 +76,8 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | GameSpace: 6 features shipped (dark mode, db backups, Yahoo OAuth, Prometheus metrics, stats sync job, WebSocket real-time) |
+| 2026-01-25 | Gorgon: Full parallel agent implementation - adaptive rate limiting (429 backoff), distributed cross-process limiting (SQLite/Redis), 1693 tests passing |
 | 2026-01-25 | Gorgon: Parallel agent execution complete (async providers, rate-limited executor, adapter migration, 1675 tests passing) |
 | 2026-01-25 | EVE_Gatekeeper: Ship-type risk profiles (8 profiles, security/kill multipliers, 15 tests) |
 | 2026-01-25 | EVE_Gatekeeper: Discord/Slack webhook alerts (subscriptions, rich formatting, 36 tests) |
@@ -131,6 +133,7 @@ Chronological record of work sessions.
 | Patching httpx in FastAPI endpoint | httpx imported inside function - patch at httpx module level, not endpoint module. Or use respx library for cleaner HTTP mocking |
 | FastAPI Query() defaults in tests | Query(24) returns Query object when called directly - pass params explicitly in tests: `func(hours=24)` |
 | Function named `test_*` collected by pytest | Rename non-test functions to avoid `test_` prefix (e.g., `send_test_message` not `test_webhook`) |
+| Multiplicative recovery doesn't increase | `int(3 * 1.2) = 3` - use `max(current + 1, int(current * factor))` to guarantee at least +1 |
 
 ---
 
