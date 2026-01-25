@@ -163,6 +163,50 @@ gh api -X DELETE repos/OWNER/REPO/git/refs/heads/BRANCH_NAME
 
 ---
 
+## GitHub Actions Multiline Outputs
+
+**Problem:** `EOF` delimiter in multiline outputs can conflict with content.
+
+**Error:** `Matching delimiter not found 'EOF'`
+
+**Solution:** Use unique delimiters:
+```yaml
+- name: Generate changelog
+  id: changelog
+  run: |
+    {
+      echo 'CHANGELOG<<CHANGELOG_EOF'
+      git log --pretty=format:"- %s (%h)" | head -50
+      echo ''
+      echo 'CHANGELOG_EOF'
+    } >> $GITHUB_OUTPUT
+```
+
+---
+
+## PyPI Trusted Publishing
+
+**Setup:** Configure at https://pypi.org/manage/project/PROJECTNAME/settings/publishing/
+
+**Required workflow settings:**
+```yaml
+permissions:
+  id-token: write  # Required for OIDC
+
+jobs:
+  publish:
+    environment:
+      name: pypi
+      url: https://pypi.org/project/PROJECTNAME/
+    steps:
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        # No API token needed with OIDC
+```
+
+**Note:** Must create `pypi` environment in GitHub repo settings and configure trusted publisher on PyPI first.
+
+---
+
 ## Key Principles
 
 1. **CI environments are minimal** - Don't assume system packages, displays, or writable paths
@@ -173,4 +217,4 @@ gh api -X DELETE repos/OWNER/REPO/git/refs/heads/BRANCH_NAME
 
 ---
 
-*Last updated: 2026-01-18*
+*Last updated: 2026-01-24*

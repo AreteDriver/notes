@@ -114,6 +114,7 @@ myapp-gui = "mypackage.gui:main"
 | pytest fixtures not found | Check conftest.py location |
 | Coverage excludes files | Check `[tool.coverage.run]` source setting |
 | `datetime.utcnow()` deprecated (Python 3.12+) | Use `datetime.now(timezone.utc)` |
+| fpdf2 can't encode `•` bullet | Use ASCII `-` - fpdf2 defaults to latin-1 encoding |
 
 ---
 
@@ -140,6 +141,31 @@ datetime.utcnow().isoformat() + "Z"
 datetime.now(timezone.utc).isoformat()  # Includes +00:00
 # Or for explicit Z suffix:
 datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+```
+
+---
+
+---
+
+## PDF Generation with fpdf2
+
+**Problem:** Unicode characters like `•` cause encoding errors.
+
+**Error:** `UnicodeEncodeError: 'latin-1' codec can't encode character '\u2022'`
+
+**Solution:** Use ASCII alternatives:
+```python
+# BAD
+pdf.cell(txt="• Item one")
+
+# GOOD
+pdf.cell(txt="- Item one")
+```
+
+Or add a Unicode font:
+```python
+pdf.add_font("DejaVu", fname="/path/to/DejaVuSans.ttf")
+pdf.set_font("DejaVu", size=12)
 ```
 
 ---

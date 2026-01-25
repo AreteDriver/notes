@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-24 | RedOPS v1.1.0: Docker, notifications, PDF/STIX reports, shell completions, man page |
 | 2026-01-24 | VDC Portfolio: Test coverage 84%→89%, Docker verified, CI green |
 | 2026-01-24 | Dotfiles: Migrated to git bare repo, 90 files tracked, nvim/lazygit/kitty configs |
 | 2026-01-20 | Gorgon: Workflow versioning feature complete + 86 new tests (28 API, 58 unit) |
@@ -105,6 +106,9 @@ Chronological record of work sessions.
 | Module-level dict not patched | Use `patch.dict("module._DICT", {...})` instead of patching functions |
 | Test needs DB table that's mocked | Run actual migrations before mocking `run_migrations` in lifespan |
 | nvim treesitter-textobjects loop error | Add `init` function to disable RTP plugin loading at startup (see dotfiles) |
+| fpdf2 Unicode bullet characters | Use ASCII `-` instead of `•` - fpdf2 latin-1 encoding can't handle Unicode |
+| GitHub Actions multiline output EOF | Use unique delimiter like `CHANGELOG_EOF` - `EOF` can conflict with content |
+| Anthropic model 404 errors | Model names changed: use `claude-sonnet-4-20250514` not `claude-3-5-sonnet-*` |
 
 ---
 
