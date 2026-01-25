@@ -252,4 +252,91 @@ pdf.set_font("DejaVu", size=12)
 
 ---
 
+## Async Patterns
+
+### Native Async with SDK Clients
+
+**Pattern:** Use native async clients instead of wrapping sync in executor.
+
+```python
+# WRONG - wastes thread pool
+async def complete_async(self, request):
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, self.complete, request)
+
+# CORRECT - native async
+from anthropic import AsyncAnthropic
+self._async_client = AsyncAnthropic(api_key=api_key)
+
+async def complete_async(self, request):
+    response = await self._async_client.messages.create(...)
+    return response
+```
+
+### Per-Provider Rate Limiting with Semaphores
+
+**Pattern:** Use asyncio semaphores to limit concurrent API calls per provider.
+
+```python
+class RateLimitedExecutor:
+    def __init__(self):
+        self._semaphores = {
+            "anthropic": asyncio.Semaphore(5),   # ~60 RPM safe
+            "openai": asyncio.Semaphore(8),      # ~90 RPM safe
+        }
+
+    async def call_with_limit(self, provider: str, coro):
+        semaphore = self._semaphores.get(provider, asyncio.Semaphore(10))
+        async with semaphore:
+            return await coro
+```
+
+### Async Subprocess Execution
+
+**Pattern:** Use `asyncio.create_subprocess_exec` for async CLI calls.
+
+```python
+async def run_cli_async(cmd: list[str], timeout: int = 300) -> str:
+    process = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    try:
+        stdout, stderr = await asyncio.wait_for(
+            process.communicate(), timeout=timeout
+        )
+    except asyncio.TimeoutError:
+        process.kill()
+        await process.wait()
+        raise RuntimeError(f"Command timed out after {timeout}s")
+
+    if process.returncode != 0:
+        raise RuntimeError(f"Command failed: {stderr.decode()}")
+    return stdout.decode()
+```
+
+### Lazy Semaphore Creation
+
+**Problem:** Semaphores must be created in async context (same event loop).
+
+```python
+# WRONG - created at __init__ before event loop exists
+def __init__(self):
+    self._semaphore = asyncio.Semaphore(5)  # May fail or wrong loop
+
+# CORRECT - lazy creation
+def __init__(self):
+    self._semaphores = None
+
+def _get_semaphores(self):
+    if self._semaphores is None:
+        self._semaphores = {
+            "provider": asyncio.Semaphore(5)
+        }
+    return self._semaphores
+```
+
+---
+
 *Last updated: 2026-01-25*
