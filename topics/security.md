@@ -305,4 +305,36 @@ stat -c '%a %n' ~/.ssh/id_* ~/.gnupg/private-keys-v1.d/* 2>/dev/null
 
 ---
 
-*Last updated: 2026-01-24*
+## Temp File Security
+
+### Race Condition Risk (TOCTOU)
+
+`tempfile.mktemp()` is **deprecated** - it only generates a name, doesn't create the file, leaving a window for race conditions.
+
+```python
+# BAD - vulnerable to race condition
+import tempfile
+temp_file = tempfile.mktemp(suffix=".png")  # File doesn't exist yet!
+# Attacker could create file here
+open(temp_file, "w").write(data)  # Writing to attacker's file
+
+# GOOD - atomically creates file
+import os
+import tempfile
+fd, temp_path = tempfile.mkstemp(suffix=".png")  # File created atomically
+os.close(fd)  # Close fd, use path
+Path(temp_path).write_bytes(data)
+```
+
+### Best Practices
+
+| Method | Use Case |
+|--------|----------|
+| `mkstemp()` | Need path, will manage cleanup |
+| `NamedTemporaryFile(delete=False)` | Need file object + path |
+| `TemporaryDirectory()` | Need temp directory |
+| `SpooledTemporaryFile()` | Memory-first, disk fallback |
+
+---
+
+*Last updated: 2026-01-25*

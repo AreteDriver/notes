@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | LikX v3.30.0: Minimap, onboarding, quick actions, undo history + security fixes |
 | 2026-01-25 | RedOPS: Plugin system integration, Shodan/Censys intel modules, 49+ new tests |
 | 2026-01-24 | RedOPS v1.2.0: Web UI (FastAPI), MCP server, Groq provider, 6 AI providers total |
 | 2026-01-24 | RedOPS v1.1.0: Docker, notifications, PDF/STIX reports, shell completions, man page |
@@ -114,6 +115,7 @@ Chronological record of work sessions.
 | Anthropic model 404 errors | Model names changed: use `claude-sonnet-4-20250514` not `claude-3-5-sonnet-*` |
 | Pydantic validator blocks valid input | Check validator logic - may need to handle special cases (e.g., `plugin:name` syntax) |
 | Test class named `Test*` collected by pytest | Rename sample classes to `Sample*` to avoid pytest collection warnings |
+| `tempfile.mktemp()` race condition | Use `tempfile.mkstemp()` - creates file atomically, returns (fd, path) |
 
 ---
 
