@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | RedOPS: Plugin system integration, Shodan/Censys intel modules, 49+ new tests |
 | 2026-01-24 | RedOPS v1.2.0: Web UI (FastAPI), MCP server, Groq provider, 6 AI providers total |
 | 2026-01-24 | RedOPS v1.1.0: Docker, notifications, PDF/STIX reports, shell completions, man page |
 | 2026-01-24 | VDC Portfolio: Test coverage 84%→89%, Docker verified, CI green |
@@ -111,6 +112,8 @@ Chronological record of work sessions.
 | pytest async tests without plugin | Use `asyncio.new_event_loop()` not `get_event_loop()` to avoid "no current event loop" |
 | GitHub Actions multiline output EOF | Use unique delimiter like `CHANGELOG_EOF` - `EOF` can conflict with content |
 | Anthropic model 404 errors | Model names changed: use `claude-sonnet-4-20250514` not `claude-3-5-sonnet-*` |
+| Pydantic validator blocks valid input | Check validator logic - may need to handle special cases (e.g., `plugin:name` syntax) |
+| Test class named `Test*` collected by pytest | Rename sample classes to `Sample*` to avoid pytest collection warnings |
 
 ---
 
@@ -150,4 +153,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-25*
+*Last updated: 2026-01-25 (Session 2)*
