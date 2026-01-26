@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-26 | RedOPS: Fixed 7 test failures + 32 deprecation warnings, replaced passlib with bcrypt, 5011 tests passing, 0 warnings |
 | 2026-01-26 | EVE_Gatekeeper: Coverage 97%, intel parser enhancements (threat types, ship detection, direction, stats/nearby endpoints), 1399 total tests (+51) |
 | 2026-01-26 | EVE_Gatekeeper: ESI structure discovery + route comparison, bridge-routing integration verified, 1348 total tests |
 | 2026-01-26 | EVE_Gatekeeper: Jump Bridge validation (highsec/WH rules) + bulk operations, 65 new tests, 1338 total |
@@ -144,6 +145,9 @@ Chronological record of work sessions.
 | AsyncMock makes all attrs async | SQLAlchemy `db.add()` is sync - set `mock_db.add = MagicMock()` explicitly |
 | FastAPI dependency not mocked | Use `app.dependency_overrides[get_dep] = lambda: mock` not `patch("...get_dep")` |
 | Patch location for imports | Top-level `from x import y` → patch at usage. Dynamic `import` inside function → patch at source |
+| SQLAlchemy event listeners with MagicMock | `event.listens_for()` fails on mocks - also patch `event` module: `mock_event.listens_for.return_value = lambda f: f` |
+| passlib 'crypt' deprecation warning | Replace passlib with direct bcrypt: `bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode()` |
+| Fingerprint includes mutable field | Don't include severity in dedup fingerprints - severity changes should be tracked as modifications, not new/resolved |
 | Test writes to real config file | Monkeypatch config path functions to return `tmp_path / "file.json"` for test isolation |
 
 ---
@@ -184,4 +188,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-26 (Session 6)*
+*Last updated: 2026-01-26 (Session 7)*
