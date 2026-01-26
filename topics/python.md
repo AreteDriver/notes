@@ -483,4 +483,95 @@ with patch("mymodule.NewAdapter") as mock:
 
 ---
 
-*Last updated: 2026-01-25*
+## Security Scanning with Bandit
+
+### Configuration for Hardware/Systems Projects
+
+Hardware drivers and systems code often trigger false positives. Configure appropriate skips:
+
+```toml
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "build", "dist"]
+skips = [
+    "B101",  # assert used (tests)
+    "B108",  # hardcoded /tmp paths (lock files, IPC)
+    "B110",  # try/except/pass (hardware cleanup)
+    "B112",  # try/except/continue (file loading loops)
+    "B311",  # random module (visual effects, not crypto)
+    "B404",  # subprocess import (system tools)
+    "B603",  # subprocess without shell=True (safe usage)
+    "B607",  # partial executable path (system binaries)
+]
+```
+
+**When each skip is appropriate:**
+| Skip | Use Case |
+|------|----------|
+| B108 | Lock files in /tmp, IPC sockets |
+| B110 | Device cleanup that must not fail |
+| B112 | Loading multiple config files, skip corrupt ones |
+| B311 | Visual effects, shuffling, non-security randomness |
+| B607 | System tools like `xdotool`, `wmctrl`, `xrandr` |
+
+### Running Bandit
+
+```bash
+# With pyproject.toml config
+bandit -r src/ -c pyproject.toml
+
+# Quiet mode (errors only)
+bandit -r src/ -c pyproject.toml -q
+
+# Show specific severity
+bandit -r src/ -c pyproject.toml -ll  # Medium+ only
+```
+
+---
+
+## Testing Graphics/Drawing Code
+
+### Pure Logic Testing Without Hardware
+
+Graphics primitives (pixels, lines, shapes) can be tested without display hardware:
+
+```python
+def test_set_pixel():
+    """Test pixel bit packing without hardware."""
+    canvas = Canvas()
+    canvas.set_pixel(0, 0, True)
+    assert canvas.get_pixel(0, 0) is True
+    # Verify bit-level storage
+    assert canvas._buffer[0] == 0x01
+
+def test_draw_line():
+    """Test Bresenham line algorithm."""
+    canvas = Canvas()
+    canvas.draw_line(0, 0, 10, 0)
+    for x in range(11):
+        assert canvas.get_pixel(x, 0) is True
+
+def test_out_of_bounds_ignored():
+    """Boundary conditions don't crash."""
+    canvas = Canvas()
+    canvas.set_pixel(-1, 0, True)  # Should not raise
+    canvas.set_pixel(9999, 0, True)
+    assert canvas.get_pixel(-1, 0) is False
+```
+
+**Testable without hardware:**
+- Pixel set/get with bit packing
+- Line drawing (Bresenham)
+- Rectangle fill/outline
+- Progress bars
+- Region inversion
+- Canvas blitting
+- Serialization (to_bytes/from_bytes)
+
+**Requires mocking or hardware:**
+- Actual display output
+- Hardware refresh timing
+- Input device events
+
+---
+
+*Last updated: 2026-01-26*

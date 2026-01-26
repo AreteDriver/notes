@@ -251,4 +251,77 @@ VITE_API_URL=http://localhost:8001
 
 ---
 
-*Last updated: 2026-01-18*
+## React Hooks Lint Fixes
+
+### set-state-in-effect Rule
+
+**Problem:** ESLint react-hooks/set-state-in-effect flags setState calls in effects.
+
+**When it's valid:** Data fetching, syncing props to state are legitimate uses.
+
+**Fix:** Use block-level eslint-disable:
+
+```tsx
+// Data fetching on mount - valid use case
+/* eslint-disable react-hooks/set-state-in-effect */
+useEffect(() => {
+  loadData();
+}, [loadData]);
+/* eslint-enable react-hooks/set-state-in-effect */
+
+// Syncing props to local state when selection changes
+/* eslint-disable react-hooks/set-state-in-effect */
+useEffect(() => {
+  setLocalValue(propValue || defaultValue);
+}, [propValue, selectedItem]);
+/* eslint-enable react-hooks/set-state-in-effect */
+```
+
+### Function Ordering for useCallback
+
+**Problem:** Using a function before it's declared causes "accessed before declared" error.
+
+**Fix:** Define functions in dependency order (dependencies first):
+
+```tsx
+// WRONG - handleMessage used before declared
+const connect = useCallback(() => {
+  ws.onmessage = (e) => handleMessage(e);  // Error!
+}, []);
+
+const handleMessage = useCallback((e) => { ... }, []);
+
+// CORRECT - handleMessage defined first
+const handleMessage = useCallback((e) => { ... }, []);
+
+const connect = useCallback(() => {
+  ws.onmessage = (e) => handleMessage(e);
+}, [handleMessage]);  // Include in deps
+```
+
+### Reconnection Callback Pattern
+
+**Problem:** Reconnect timer needs to call `connect()` but can't have stale closure.
+
+**Fix:** Use ref to hold current function:
+
+```tsx
+const connectRef = useRef<() => void>(() => {});
+
+const connect = useCallback(() => {
+  const ws = new WebSocket(url);
+  ws.onclose = () => {
+    // Use ref to avoid stale closure
+    setTimeout(() => connectRef.current(), 2000);
+  };
+}, [handleMessage]);
+
+// Keep ref updated
+useEffect(() => {
+  connectRef.current = connect;
+}, [connect]);
+```
+
+---
+
+*Last updated: 2026-01-26*
