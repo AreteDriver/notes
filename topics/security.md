@@ -337,4 +337,42 @@ Path(temp_path).write_bytes(data)
 
 ---
 
-*Last updated: 2026-01-25*
+---
+
+## Game EULA/TOS Compliance
+
+When building tools for games, EULA/TOS compliance is a security concern - violating it can result in account bans and legal issues.
+
+### EVE Online Specific Rules
+
+| Feature | Status | Rule |
+|---------|--------|------|
+| Input broadcasting | **BANNED** | One keypress to multiple clients = permaban |
+| Input multiplexing | **BANNED** | Same as broadcasting |
+| Cache scraping | **BANNED** | Reading game memory/cache |
+| Automation/macros | **BANNED** | Anything beyond 1:1 input |
+| Window management | Allowed | Arranging windows, previews |
+| Hotkey cycling | Allowed | One key = focus one window |
+| Overlay tools | Allowed | If no game data reading |
+
+### The "One Key = One Action" Rule
+
+```
+ALLOWED:     Press F1 → Focus Window A
+BANNED:      Press F1 → Send F1 to Windows A, B, C, D
+```
+
+### Before Building Game Tools
+
+1. **Read the EULA/TOS** - Specifically sections on third-party software
+2. **Check for policy updates** - Rules change (EVE banned broadcasting in 2015)
+3. **When in doubt, don't** - Account bans are permanent
+4. **Document compliance** - Explain why features are EULA-safe
+
+### Reference Links
+- EVE Online: https://support.eveonline.com/hc/en-us/articles/204873262
+- General: Check each game's official policy page
+
+---
+
+*Last updated: 2026-01-26*
