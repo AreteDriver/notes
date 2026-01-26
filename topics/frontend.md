@@ -324,4 +324,111 @@ useEffect(() => {
 
 ---
 
+## WebSocket + REST API Architecture
+
+### Pattern: Hardware Control Web GUI
+
+For controlling hardware devices via web interface:
+
+```
+┌─────────────────────┐     WebSocket      ┌─────────────────────┐
+│   React Frontend    │ ◄──────────────────► │  FastAPI Backend    │
+│   (localhost:5173)  │                      │  (localhost:8765)   │
+└─────────────────────┘     REST API       └──────────┬──────────┘
+                                                       │
+                                                       │ hidapi/libusb
+                                                       ▼
+                                              ┌─────────────────┐
+                                              │   Hardware      │
+                                              └─────────────────┘
+```
+
+**WebSocket for:** Real-time events (button presses, state changes)
+**REST API for:** CRUD operations (profiles, macros, settings)
+
+### Frontend WebSocket Hook
+
+```typescript
+export function useDeviceWebSocket() {
+  const [state, setState] = useState<DeviceState>(initialState);
+  const [connected, setConnected] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+  const connectRef = useRef<() => void>(() => {});
+
+  const handleMessage = useCallback((msg: { type: string; [key: string]: unknown }) => {
+    switch (msg.type) {
+      case 'state': setState(msg.data as DeviceState); break;
+      case 'button_pressed':
+        setState(prev => ({ ...prev, pressed: [...prev.pressed, msg.button as string] }));
+        break;
+      // ... other message types
+    }
+  }, []);
+
+  const connect = useCallback(() => {
+    const ws = new WebSocket('ws://127.0.0.1:8765/ws');
+    ws.onopen = () => { setConnected(true); ws.send(JSON.stringify({ type: 'get_state' })); };
+    ws.onclose = () => { setConnected(false); setTimeout(() => connectRef.current(), 2000); };
+    ws.onmessage = (e) => handleMessage(JSON.parse(e.data));
+    wsRef.current = ws;
+  }, [handleMessage]);
+
+  useEffect(() => { connectRef.current = connect; }, [connect]);
+  useEffect(() => { connect(); return () => wsRef.current?.close(); }, [connect]);
+
+  const sendMessage = useCallback((msg: object) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify(msg));
+    }
+  }, []);
+
+  return { state, connected, sendMessage };
+}
+```
+
+### Backend with Simulation Mode
+
+```python
+# FastAPI backend that works with or without hardware
+from fastapi import FastAPI, WebSocket
+
+class DeviceState:
+    def __init__(self):
+        self.connected = False  # True when hardware detected
+        self.pressed_keys: set[str] = set()
+
+device_state = DeviceState()
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    await websocket.send_json({"type": "state", "data": device_state.to_dict()})
+
+    while True:
+        data = await websocket.receive_json()
+        if data["type"] == "simulate_press":
+            # Works even without hardware
+            device_state.pressed_keys.add(data["button"])
+            await broadcast({"type": "button_pressed", "button": data["button"]})
+
+async def device_event_loop():
+    """Poll hardware, broadcast events. Falls back to simulation if no device."""
+    try:
+        device = find_device()
+        device_state.connected = True
+        while True:
+            events = device.read()
+            for event in events:
+                await broadcast({"type": "button_pressed", "button": event.button})
+    except DeviceNotFoundError:
+        pass  # Run in simulation mode
+```
+
+**Benefits:**
+- Development without hardware
+- UI fully testable
+- Same code path for real and simulated input
+
+---
+
 *Last updated: 2026-01-26*

@@ -574,4 +574,166 @@ def test_out_of_bounds_ignored():
 
 ---
 
+## Portable Packaging for Games/Apps
+
+### Launcher Script Pattern
+
+For Python apps that need to run without pip install:
+
+```bash
+#!/bin/bash
+# run_game.sh - Portable launcher
+
+set -e
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export MY_APP_ROOT="$SCRIPT_DIR"  # For resource path resolution
+
+# Parse args
+for arg in "$@"; do
+    case $arg in
+        --wayland) export SDL_VIDEODRIVER=wayland ;;
+        --x11) export SDL_VIDEODRIVER=x11 ;;
+        --help) echo "Usage: $0 [--wayland|--x11]"; exit 0 ;;
+    esac
+done
+
+# Find Python 3.9+
+find_python() {
+    for cmd in python3 python; do
+        if command -v "$cmd" &> /dev/null; then
+            version=$("$cmd" -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+            major=$(echo "$version" | cut -d. -f1)
+            minor=$(echo "$version" | cut -d. -f2)
+            if [ "$major" -ge 3 ] && [ "$minor" -ge 9 ]; then
+                echo "$cmd"; return 0
+            fi
+        fi
+    done
+    return 1
+}
+
+PYTHON=$(find_python) || { echo "Python 3.9+ required"; exit 1; }
+
+# Auto-install deps if missing
+if ! "$PYTHON" -c "import pygame" 2>/dev/null; then
+    "$PYTHON" -m pip install --user -r "$SCRIPT_DIR/requirements.txt"
+fi
+
+cd "$SCRIPT_DIR"
+exec "$PYTHON" main.py "$@"
+```
+
+### Platform Detection (Wayland/X11)
+
+```python
+# platform_init.py - Must run BEFORE pygame.init()
+import os
+import sys
+
+def init_platform() -> str:
+    """Configure SDL video driver before pygame."""
+    if sys.platform != 'linux':
+        return 'default'
+
+    # Respect user override
+    if os.environ.get('SDL_VIDEODRIVER'):
+        return os.environ['SDL_VIDEODRIVER']
+
+    # Auto-detect session type
+    if os.environ.get('WAYLAND_DISPLAY'):
+        driver = 'wayland'
+        os.environ['SDL_VIDEODRIVER'] = driver
+        os.environ.setdefault('SDL_VIDEO_WAYLAND_ALLOW_LIBDECOR', '1')
+    elif os.environ.get('DISPLAY'):
+        driver = 'x11'
+        os.environ['SDL_VIDEODRIVER'] = driver
+    else:
+        driver = 'default'
+
+    return driver
+```
+
+**Usage in main.py:**
+```python
+from platform_init import init_platform
+init_platform()  # MUST be before pygame import
+
+import pygame
+pygame.init()
+```
+
+### Desktop Entry Installation
+
+```bash
+#!/bin/bash
+# install_desktop.sh - Create menu entry
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+
+mkdir -p "$DESKTOP_DIR"
+cat > "$DESKTOP_DIR/MyApp.desktop" << EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=My App
+Exec=$SCRIPT_DIR/run_game.sh
+Icon=$SCRIPT_DIR/assets/icon.png
+Terminal=false
+Categories=Game;
+EOF
+
+chmod +x "$SCRIPT_DIR/run_game.sh"
+```
+
+**Note:** Never commit .desktop files with unexpanded `${INSTALL_DIR}` - use a template or generate at install time.
+
+### Icon Generation from SVG
+
+```python
+# Generate PNG and ICO from SVG
+import cairosvg
+from PIL import Image
+import io
+
+# PNG for Linux desktop
+cairosvg.svg2png(url='icon.svg', write_to='icon.png',
+                 output_width=256, output_height=256)
+
+# ICO for Windows (multiple sizes)
+sizes = [16, 32, 48, 256]
+images = []
+for size in sizes:
+    png_data = cairosvg.svg2png(url='icon.svg',
+                                output_width=size, output_height=size)
+    img = Image.open(io.BytesIO(png_data)).convert('RGBA')
+    images.append(img)
+
+images[-1].save('icon.ico', format='ICO', append_images=images[:-1])
+```
+
+**Dependencies:** `cairosvg`, `Pillow`
+
+### Release Workflow (GitHub Actions)
+
+```yaml
+build-linux-portable:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v6
+    - name: Package
+      run: |
+        mkdir -p portable/MyApp
+        cp *.py portable/MyApp/
+        cp -r core assets data portable/MyApp/
+        cp run_game.sh install_desktop.sh requirements.txt portable/MyApp/
+        chmod +x portable/MyApp/*.sh
+        cd portable && tar -czvf ../MyApp-${{ github.ref_name }}-linux-portable.tar.gz MyApp
+    - uses: softprops/action-gh-release@v2
+      with:
+        files: MyApp-${{ github.ref_name }}-linux-portable.tar.gz
+```
+
+---
+
 *Last updated: 2026-01-26*

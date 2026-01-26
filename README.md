@@ -76,6 +76,9 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-26 | EVE_Gatekeeper: ESI structure discovery + route comparison, bridge-routing integration verified, 1348 total tests |
+| 2026-01-26 | EVE_Gatekeeper: Jump Bridge validation (highsec/WH rules) + bulk operations, 65 new tests, 1338 total |
+| 2026-01-26 | EVE_Gatekeeper: Jump Bridge Manager enhancements - individual bridge CRUD, stats endpoint, 35 new tests, 1308 total |
 | 2026-01-26 | EVE_Gatekeeper: Coverage 94%→96%, 1273 total tests (+197), fixed starmap imports, 131 new starmap tests |
 | 2026-01-25 | EVE_Gatekeeper: Coverage 69%→94%, 1141 total tests (zkill_listener 58%→99%, auth 69%→99%, webhooks 83%→99%, system_notes 88%→97%, routing 89%→94%) |
 | 2026-01-25 | EVE_Gatekeeper: 6 features (ESI location, intel parser, jump fatigue, route sharing, system notes, external links) - 279 new tests, 1076 total |
@@ -140,6 +143,7 @@ Chronological record of work sessions.
 | AsyncMock makes all attrs async | SQLAlchemy `db.add()` is sync - set `mock_db.add = MagicMock()` explicitly |
 | FastAPI dependency not mocked | Use `app.dependency_overrides[get_dep] = lambda: mock` not `patch("...get_dep")` |
 | Patch location for imports | Top-level `from x import y` → patch at usage. Dynamic `import` inside function → patch at source |
+| Test writes to real config file | Monkeypatch config path functions to return `tmp_path / "file.json"` for test isolation |
 
 ---
 
