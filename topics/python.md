@@ -736,4 +736,138 @@ build-linux-portable:
 
 ---
 
+## Mypy Configuration Patterns
+
+### Strict Mode vs Practical Mode
+
+**Problem:** `strict = true` enables all pedantic checks, causing noise from third-party libs.
+
+**Practical config:**
+```toml
+[tool.mypy]
+python_version = "3.11"
+strict = false
+warn_return_any = false
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true
+```
+
+**When to use strict:** Libraries with public APIs where type safety is critical.
+
+**When to relax:** Applications using many third-party libs without stubs.
+
+### Third-Party Library Stubs
+
+**Pattern:** Add `type: ignore[import-untyped]` for libs without stubs:
+
+```python
+from weasyprint import CSS, HTML  # type: ignore[import-untyped]
+import joblib  # type: ignore[import-untyped]
+from sklearn.ensemble import GradientBoostingClassifier  # type: ignore[import-untyped]
+from authlib.integrations.starlette_client import OAuth  # type: ignore[import-untyped]
+from cachetools import TTLCache  # type: ignore[import-untyped]
+```
+
+**Common libs without stubs:** weasyprint, sklearn, joblib, authlib, cachetools
+
+### Pydantic Field Aliases and Mypy
+
+**Problem:** Pydantic aliases confuse mypy - using field name in constructor fails.
+
+```python
+class Response(BaseModel):
+    json_str: str = Field(..., alias="json")
+    model_config = {"populate_by_name": True}
+
+# Mypy error: Unexpected keyword argument "json_str"
+Response(json_str="...")  # Works at runtime, mypy complains
+
+# Fix: Use the alias name in constructor
+Response(json="...")  # Both mypy and runtime happy
+```
+
+**Alternative:** Install `pydantic` mypy plugin, but alias approach is simpler.
+
+### Optional Type for FastAPI Dependencies
+
+**Problem:** FastAPI dependency with default `None` needs explicit Optional type.
+
+```python
+# WRONG - mypy error: default has type "None", argument has type "Foo"
+async def endpoint(dep: MyDependency = None):
+    ...
+
+# CORRECT
+async def endpoint(dep: MyDependency | None = None):
+    if dep is None:
+        raise HTTPException(401, "Auth required")
+    # Now dep is narrowed to MyDependency
+    await use_dependency(dep)
+```
+
+---
+
+## Ruff Linting Patterns
+
+### Exception Chaining (B904)
+
+**Problem:** `raise` inside `except` should chain exceptions.
+
+```python
+# WRONG - B904 error
+try:
+    value = parse(data)
+except ValueError:
+    raise HTTPException(400, "Invalid data")
+
+# CORRECT - explicit chain (preserves traceback)
+try:
+    value = parse(data)
+except ValueError as e:
+    raise HTTPException(400, f"Invalid data: {e}") from e
+
+# CORRECT - suppress chain (intentional, clean error)
+try:
+    value = parse(data)
+except ValueError:
+    raise HTTPException(400, "Invalid data") from None
+```
+
+**When to use `from e`:** When original error context is useful for debugging.
+**When to use `from None`:** When you're intentionally hiding internal details (API responses).
+
+### Import Sorting with Type Ignore
+
+**Problem:** Ruff I001 (isort) reorders imports, breaking multi-line type: ignore.
+
+```python
+# Before ruff format (single line)
+from sklearn.model_selection import cross_val_score, train_test_split  # type: ignore[import-untyped]
+
+# After ruff format (multi-line, comment moved correctly)
+from sklearn.model_selection import (  # type: ignore[import-untyped]
+    cross_val_score,
+    train_test_split,
+)
+```
+
+**Note:** Ruff handles this correctly - the comment moves to the `from` line.
+
+### ML Naming Conventions
+
+**Problem:** ML code uses `X` for feature matrices, violating N803/N806 (lowercase).
+
+```toml
+[tool.ruff.lint]
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "N803",  # Argument name should be lowercase (X is ML convention)
+    "N806",  # Variable should be lowercase (X, X_train are ML convention)
+]
+```
+
+---
+
 *Last updated: 2026-01-26*
