@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-25 | EVE_Gatekeeper: Coverage 69%→94%, 1141 total tests (zkill_listener 58%→99%, auth 69%→99%, webhooks 83%→99%, system_notes 88%→97%, routing 89%→94%) |
 | 2026-01-25 | EVE_Gatekeeper: 6 features (ESI location, intel parser, jump fatigue, route sharing, system notes, external links) - 279 new tests, 1076 total |
 | 2026-01-25 | GameSpace: 6 features shipped (dark mode, db backups, Yahoo OAuth, Prometheus metrics, stats sync job, WebSocket real-time) |
 | 2026-01-25 | Gorgon: Full parallel agent implementation - adaptive rate limiting (429 backoff), distributed cross-process limiting (SQLite/Redis), 1693 tests passing |
@@ -135,6 +136,9 @@ Chronological record of work sessions.
 | FastAPI Query() defaults in tests | Query(24) returns Query object when called directly - pass params explicitly in tests: `func(hours=24)` |
 | Function named `test_*` collected by pytest | Rename non-test functions to avoid `test_` prefix (e.g., `send_test_message` not `test_webhook`) |
 | Multiplicative recovery doesn't increase | `int(3 * 1.2) = 3` - use `max(current + 1, int(current * factor))` to guarantee at least +1 |
+| AsyncMock makes all attrs async | SQLAlchemy `db.add()` is sync - set `mock_db.add = MagicMock()` explicitly |
+| FastAPI dependency not mocked | Use `app.dependency_overrides[get_dep] = lambda: mock` not `patch("...get_dep")` |
+| Patch location for imports | Top-level `from x import y` → patch at usage. Dynamic `import` inside function → patch at source |
 
 ---
 
@@ -174,4 +178,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-25 (Session 4)*
+*Last updated: 2026-01-25 (Session 5)*
