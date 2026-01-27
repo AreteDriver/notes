@@ -896,3 +896,50 @@ ignore = [
 ---
 
 *Last updated: 2026-01-26*
+
+### Ruff Format Before Commit (Critical)
+
+**Problem:** Pushing code with formatting inconsistencies causes CI lint job failure.
+
+**Error:** CI reports `Would reformat: <file.py>` from `ruff format --check` step. PR cannot merge.
+
+**Root cause:** Developer skipped local formatting step. Ruff has specific rules for multi-line constructs (dicts, function calls, set literals, imports) that differ from single-line defaults. Test files are especially susceptible due to multi-line test data.
+
+**Fix pattern:**
+
+```bash
+# Before committing ANY code
+ruff format --check .
+
+# If "Would reformat" appears, fix it
+ruff format .
+
+# Stage formatting changes separately
+git add .
+git commit -m "chore(lint): reformat code with ruff"
+
+# Then stage actual code changes
+git add .
+git commit -m "feat: actual feature..."
+```
+
+**Key insight:** Formatting should be a separate commit from functional changes. Makes git history cleaner and easier to revert if needed.
+
+**Automation:** Add to pre-commit hook:
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+
+ruff format --check . && ruff check . || {
+    echo "Run 'ruff format .' and 'ruff check .' before committing"
+    exit 1
+}
+```
+
+**Session pattern discovered:**
+- CI failed on first push: "Would reformat: <file>"
+- Added follow-up `chore(lint)` commit to fix
+- Pattern: Always run both `ruff format .` and `ruff check .` before `git push`
+- Test files with multi-line dicts/function calls particularly prone to this
+
