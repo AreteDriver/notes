@@ -114,3 +114,20 @@ Added `SkillEnforcer` to validate agent output against skill-defined constraints
 - **Lazy init**: `enforcer` property on client only initializes on first use, with `_enforcer_init_attempted` guard to avoid repeated failures.
 
 Tests: 14 unit + 2 integration.
+
+## 2026-01-27 — Consensus Integration into Executor + Pipeline
+
+### What was done
+- Wired consensus voting results into `WorkflowExecutor._execute_claude_code()` — propagates `consensus` metadata and `pending_user_confirmation` into step output
+- Fixed bug in `AnalyticsPipeline.agent_handler` — was silently ignoring `success=False` from `execute_agent()`, now raises `RuntimeError`
+- Added `pending_user_confirmation` wrapping in pipeline handler
+- Added 5 integration tests in `TestOrchestratorConsensusIntegration`
+
+### Key decisions
+- No new pause mechanism — `pending_user_confirmation` propagates as output data for callers to inspect
+- Consensus rejection = step failure, reuses existing `on_failure` strategies (abort/skip/retry/fallback)
+
+### Gotchas
+- `_get_claude_client` in executor.py is a module-level function, not an instance method — must patch `test_ai.workflow.executor._get_claude_client`, not `patch.object(executor, ...)`
+- Executor's `_execute_claude_code` requires `dry_run` attribute on the instance — when using `__new__` for tests, must set `executor.dry_run = False`
+- `test_add_agent_stage` in test_analytics.py is flaky in full suite (mock contamination) but passes in isolation — pre-existing issue
