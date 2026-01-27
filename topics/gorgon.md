@@ -102,3 +102,15 @@ Bumped version 0.3.0 → 1.0.0 in `pyproject.toml` and `README.md`. Updated READ
 Fixed `QUICKSTART.md` repo URL from `test-ai.git` → `Gorgon.git`.
 
 **Branch protection bypass noted:** `git push` to main bypassed PR requirement + status checks (admin bypass enabled via ADL-20260127-006). Expected behavior for solo dev with `enforce_admins=false`.
+
+---
+
+## 2026-01-27: SkillEnforcer — Runtime Output Validation
+
+Added `SkillEnforcer` to validate agent output against skill-defined constraints:
+- **Protected paths**: fnmatch glob matching on paths extracted from output (e.g. `~/.ssh/id_*`)
+- **Blocked patterns**: Compiled regex with cache (e.g. `rm\s+-rf\s+/`)
+- **Fail-open**: Wired into `ClaudeCodeClient.execute_agent` (sync + async). Enforcement errors return allow — never blocks execution.
+- **Lazy init**: `enforcer` property on client only initializes on first use, with `_enforcer_init_attempted` guard to avoid repeated failures.
+
+Tests: 14 unit + 2 integration.
