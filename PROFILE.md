@@ -3,9 +3,9 @@
 ## Identity
 
 **Name:** ARETE (AreteDriver)
-**Current Role:** AI Enablement & Workflow Analyst @ Toyota
-**Location:** Portland, Oregon
-**Experience:** 17+ years enterprise support & manufacturing
+**Current Role:** AI Enablement & Workflow Analyst
+**Location:** Pacific Northwest, US
+**Experience:** 15+ years enterprise support & manufacturing
 
 ---
 

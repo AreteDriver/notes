@@ -410,7 +410,7 @@ result = template.format(**sanitized)
 Full security audit of AreteDriver GitHub repos and deep audit of RedOPS.
 
 ### Findings & Fixes
-- **GitHub profile**: Both emails (AreteDriver@gmail.com, jamesyng79@gmail.com) were publicly visible in commit history across all repos. Fixed global git email to noreply address.
+- **GitHub profile**: Both personal emails were publicly visible in commit history across all repos. Fixed global git email to noreply address.
 - **Missing .gitignore**: EVE_Rebellion, vdc-display, pomodoro-timer lacked .env in .gitignore. Fixed and pushed.
 - **EVE_Rebellion**: __pycache__ was tracked in git. Removed with git rm --cached.
 - **RedOPS deep audit**: 19 findings (2 critical, 6 high, 6 medium, 5 low), all fixed:
