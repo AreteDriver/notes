@@ -431,4 +431,22 @@ async def device_event_loop():
 
 ---
 
-*Last updated: 2026-01-26*
+## Next.js Migration Notes
+
+### Next.js 14 → 15 (Pages Router)
+- **Zero code changes** for Pages Router apps
+- React 18 → 19, ESLint 8 → 9 come along for the ride
+- ESLint 9 works fine with `.eslintrc.json` (no flat config migration needed)
+- `next lint` deprecated in v15 — migrate to ESLint CLI: `npx @next/codemod@canary next-lint-to-eslint-cli .`
+- `next build` auto-updates `next-env.d.ts` — include in commits
+- `next-i18next@15` compatible with Next.js 15
+
+### Why v15 not v16
+- Next.js 16 deprecates Pages Router entirely
+- v15 is the last version with full Pages Router support
+- App Router migration is a separate, larger effort
+- v15 gets you React 19 + modern ESLint without architecture changes
+
+---
+
+*Last updated: 2026-01-27*
