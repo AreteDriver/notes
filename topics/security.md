@@ -375,6 +375,35 @@ BANNED:      Press F1 → Send F1 to Windows A, B, C, D
 
 ---
 
+## Prompt Template Injection
+
+When using `str.format()` or f-strings with user input in prompt templates, user-supplied values can reference Python internals.
+
+### Attack Vector
+```python
+# User submits: {__class__.__init__.__globals__}
+template = "Generate code for: {request}"
+template.format(request=user_input)  # Leaks Python globals!
+```
+
+### Prevention
+```python
+def sanitize_prompt_variable(value: str) -> str:
+    """Escape braces before str.format() interpolation."""
+    return str(value).replace("{", "{{").replace("}", "}}")
+
+# Usage
+sanitized = {k: sanitize_prompt_variable(v) for k, v in kwargs.items()}
+result = template.format(**sanitized)
+```
+
+### Also Consider
+- Length limits on variable values (prevent prompt stuffing)
+- Allowlist of expected variable names
+- Use `string.Template` ($var syntax) instead of `str.format()` for untrusted input
+
+---
+
 ## 2026-01-27: GitHub Security Audit
 
 ### Session Summary

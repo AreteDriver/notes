@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-27 | Gorgon: Split PR #29 (5474 lines, 28 files) into 3 focused PRs, resolved cherry-pick conflicts, added prompt sanitization + 51 Slack/cost tracker tests, merged all 3 |
 | 2026-01-27 | Chefwise: Reverted next/eslint major bumps, fixed 4 test suites (31 failures → 0), locked dependabot to minor/patch for frameworks |
 | 2026-01-27 | Batch-merged 14 dependabot PRs across 4 repos (Gorgon, Chefwise, EVE_Quartermaster, GithubDesktopLinux), resolved 3 merge conflicts |
 | 2026-01-26 | EVE_Gatekeeper: 1604 tests, MCP server 84% coverage, mobile (46 tests) + desktop (29 tests) suites verified |
@@ -154,6 +155,9 @@ Chronological record of work sessions.
 | Test writes to real config file | Monkeypatch config path functions to return `tmp_path / "file.json"` for test isolation |
 | @testing-library/react-native v14 not found | Use v13 - v14 only has alpha/beta releases. Also use `--legacy-peer-deps` for React 19 compatibility |
 | Background agent sandbox denies cd/sed to /tmp | Use `git -C /path` instead of `cd /path && git`. Resolve conflicts in main session, not background agents |
+| Cherry-pick conflicts when splitting PR | Commits that build on each other conflict when cherry-picked independently. Resolve by keeping both sides (ours + theirs) for additive changes |
+| `str.format()` prompt injection | User input with `{__class__.__init__.__globals__}` can leak Python internals. Escape braces: `text.replace("{", "{{").replace("}", "}}")` before interpolation |
+| GitHub "not mergeable" right after push | GitHub needs a few seconds to compute merge status. Wait and retry, or check `gh pr view --json mergeable` |
 | Multiple dependabot PRs conflict after first merge | Merge in order of least conflict; later PRs may need rebase after each merge |
 | Dependabot auto-merges major version bumps | Add `ignore` rules for `version-update:semver-major` on framework packages in `dependabot.yml` |
 | Jest test UIDs fail Firebase validation silently | Use realistic test fixtures (20+ char alphanumeric UIDs) matching production validation regexes |

@@ -311,4 +311,36 @@ gh pr merge N --repo owner/repo --merge
 
 ---
 
+## Splitting a Large PR with Cherry-Pick
+
+When a PR has grown too large, split it by cherry-picking commits into new branches.
+
+### Process
+```bash
+# 1. Close the original PR with explanation
+gh pr close 29 --comment "Splitting into 3 focused PRs..."
+
+# 2. For each group of commits, create a branch from main
+git checkout main && git pull
+git checkout -b feat/part-a
+git cherry-pick <commit1> <commit2> <commit3>
+git push -u origin feat/part-a
+gh pr create --title "Part A" --body "..."
+
+# 3. Repeat for other groups
+```
+
+### Conflict Resolution
+When later commits depend on earlier ones (e.g., commit 4 adds enums after commit 1 added enums):
+- Cherry-picking commit 4 alone onto main will conflict
+- Resolve by keeping both sides: main's content + the new additions
+- After merging earlier PRs, later PRs may need a merge from main before they're mergeable
+
+### Gotchas
+- GitHub takes a few seconds to recompute merge status after pushing conflict resolution
+- If `gh pr merge` fails with "not mergeable", check `gh pr view --json mergeable` and retry
+- Merge PRs in dependency order (independent first, then dependent ones)
+
+---
+
 *Last updated: 2026-01-27*

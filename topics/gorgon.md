@@ -1,4 +1,22 @@
 
+## 2026-01-27: PR #29 Split + Security Hardening
+
+Split oversized PR #29 (5,474 lines, 28 files, 5 commits) into 3 focused PRs:
+
+| PR | Scope | Status |
+|----|-------|--------|
+| #31 | MODEL_BUILDER agent (prompts, workflows, examples) | Merged |
+| #32 | DATA_ANALYST/DEVOPS/SECURITY_AUDITOR/MIGRATOR agents + Slack client + cost tracker | Merged |
+| #33 | Workflow visualizer + cost dashboard + Rich CLI | Merged |
+
+**Security fix:** Added `sanitize_prompt_variable()` to escape `{}` in user input before `str.format()` interpolation. Prevents format string injection in prompt templates.
+
+**Tests added:** 51 new tests for `slack_client.py` (23) and `cost_tracker.py` (28).
+
+**Cherry-pick lesson:** Commits 1-3 added MODEL_BUILDER; commit 4 added more agents on top. Cherry-picking commit 4 alone onto main caused conflicts in shared files (`base.py`, `definitions.py`, `claude_code_client.py`, `ARCHITECTURE.md`). Resolved by keeping both sides.
+
+---
+
 ## 2026-01-26: Test Coverage Push
 
 Added 111 tests covering previously untested modules:
