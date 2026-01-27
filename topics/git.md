@@ -267,4 +267,48 @@ dotfiles push
 
 ---
 
-*Last updated: 2026-01-24*
+## Batch Dependabot PR Merges
+
+### List All Open PRs Across Repos
+```bash
+# Check each repo for open PRs
+for repo in AreteDriver/Chefwise AreteDriver/Gorgon; do
+  echo "=== $repo ==="
+  gh pr list --repo "$repo"
+done
+```
+
+### Batch Merge Clean PRs
+```bash
+gh pr merge 60 --repo AreteDriver/Chefwise --merge
+gh pr merge 59 --repo AreteDriver/Chefwise --merge
+# Run all in parallel if independent
+```
+
+### Resolve Dependabot Conflicts
+```bash
+# Clone, checkout branch, rebase onto main
+gh repo clone owner/repo /tmp/repo-fix -- --depth=50
+git -C /tmp/repo-fix fetch origin branch-name
+git -C /tmp/repo-fix checkout -b branch-name FETCH_HEAD
+git -C /tmp/repo-fix rebase origin/main
+
+# Resolve conflicts (accept dependabot + keep main's other changes)
+git -C /tmp/repo-fix checkout --theirs package.json package-lock.json
+# Manually adjust any versions that should come from main
+git -C /tmp/repo-fix add .
+git -C /tmp/repo-fix rebase --continue
+
+# Force push and merge
+git -C /tmp/repo-fix push --force origin branch-name
+gh pr merge N --repo owner/repo --merge
+```
+
+### Gotchas
+- Merging one dependabot PR can make others conflict (shared package.json)
+- Use `git -C /path` not `cd /path && git` (works better in sandboxed environments)
+- Check CI status before merging — pre-existing failures may block
+
+---
+
+*Last updated: 2026-01-27*

@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-27 | Batch-merged 14 dependabot PRs across 4 repos (Gorgon, Chefwise, EVE_Quartermaster, GithubDesktopLinux), resolved 3 merge conflicts |
 | 2026-01-26 | EVE_Gatekeeper: 1604 tests, MCP server 84% coverage, mobile (46 tests) + desktop (29 tests) suites verified |
 | 2026-01-26 | RedOPS: Fixed 7 test failures + 32 deprecation warnings, replaced passlib with bcrypt, 5011 tests passing, 0 warnings |
 | 2026-01-26 | EVE_Gatekeeper: Coverage 97%, intel parser enhancements (threat types, ship detection, direction, stats/nearby endpoints), 1399 total tests (+51) |
@@ -151,6 +152,8 @@ Chronological record of work sessions.
 | Fingerprint includes mutable field | Don't include severity in dedup fingerprints - severity changes should be tracked as modifications, not new/resolved |
 | Test writes to real config file | Monkeypatch config path functions to return `tmp_path / "file.json"` for test isolation |
 | @testing-library/react-native v14 not found | Use v13 - v14 only has alpha/beta releases. Also use `--legacy-peer-deps` for React 19 compatibility |
+| Background agent sandbox denies cd/sed to /tmp | Use `git -C /path` instead of `cd /path && git`. Resolve conflicts in main session, not background agents |
+| Multiple dependabot PRs conflict after first merge | Merge in order of least conflict; later PRs may need rebase after each merge |
 
 ---
 
@@ -190,4 +193,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-26 (Session 7)*
+*Last updated: 2026-01-27 (Session 8)*
