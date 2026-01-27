@@ -223,6 +223,101 @@ jobs:
 
 ---
 
+## Concurrency Groups
+
+**Problem:** Rapid pushes waste Actions minutes running duplicate workflows.
+
+**Solution:** Add concurrency groups to cancel in-progress runs:
+```yaml
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+```
+
+**Applied to:** All repos (2026-01-27). RedOPS Security workflow also got this.
+
+---
+
+## Actions Budget Exhaustion
+
+**Problem:** "The job was not started because an Actions budget is preventing further use." All jobs fail with this message when monthly free tier minutes are consumed.
+
+**Symptoms:** Every workflow across all repos fails simultaneously. Not a code issue.
+
+**Mitigations:**
+- Add concurrency groups (prevents duplicate runs)
+- Avoid matrix builds unless needed (e.g., 3 Python versions = 3x minutes)
+- Use `paths` filters to skip CI on docs-only changes
+- Cache pip/cargo/node_modules aggressively
+- Budget resets on billing cycle (check Settings > Billing)
+
+---
+
+## CodeQL Action Deprecation
+
+**Problem:** CodeQL Action v3 deprecated December 2026.
+
+**Solution:** Upgrade all `github/codeql-action/*@v3` to `@v4`:
+```yaml
+- uses: github/codeql-action/init@v4
+- uses: github/codeql-action/autobuild@v4
+- uses: github/codeql-action/analyze@v4
+- uses: github/codeql-action/upload-sarif@v4
+```
+
+---
+
+## TruffleHog Action Version
+
+**Problem:** `trufflesecurity/trufflehog@main` is unstable — can break without warning.
+
+**Solution:** Pin to a release tag:
+```yaml
+- uses: trufflesecurity/trufflehog@v3.88.0
+```
+
+---
+
+## Bandit SARIF Upload Failure
+
+**Problem:** `Path does not exist: bandit-results.sarif` — upload step fails when Bandit finds no issues or errors out.
+
+**Solution:**
+```yaml
+- name: Run Bandit
+  run: bandit -r src/package_name/ -f sarif -o bandit-results.sarif || true
+
+- name: Upload Bandit results
+  uses: github/codeql-action/upload-sarif@v4
+  if: always() && hashFiles('bandit-results.sarif') != ''
+  with:
+    sarif_file: 'bandit-results.sarif'
+```
+
+**Key:** Use `hashFiles()` conditional to skip upload when file doesn't exist.
+
+---
+
+## Missing pyproject.toml Extras in CI
+
+**Problem:** `pip install -e ".[dev,test]"` silently ignores non-existent extras (e.g., `test` doesn't exist).
+
+**Solution:** Check actual extras with:
+```python
+import tomllib
+with open('pyproject.toml', 'rb') as f:
+    d = tomllib.load(f)
+print(d['project']['optional-dependencies'].keys())
+```
+
+Match CI install command to actual extras. RedOPS fix: `[dev,test]` → `[dev,web,full]`.
+
+---
+
 ## Key Principles
 
 1. **CI environments are minimal** - Don't assume system packages, displays, or writable paths
@@ -230,6 +325,9 @@ jobs:
 3. **Let frameworks manage sub-dependencies** - Don't pin starlette if using FastAPI
 4. **Run formatters locally** - Catch ruff/prettier issues before pushing
 5. **Batch Dependabot merges carefully** - Merge one at a time or request rebases
+6. **Pin security action versions** - Never use `@main` for TruffleHog/Trivy/etc.
+7. **Add concurrency groups** - Every CI workflow should cancel duplicate runs
+8. **Verify extras exist** - pip silently ignores non-existent optional-dependencies
 
 ---
 

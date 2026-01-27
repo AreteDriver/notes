@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-27 | CI/CD batch fix: RedOPS (497 lint fixes, security workflow CodeQL v4, TruffleHog pinned, Bandit SARIF fix, CI deps fix), concurrency groups added to 8 repos, all pushed |
 | 2026-01-27 | GameSpace: 5 features shipped — unified roster model (ESPN/Yahoo/Sleeper merge), accuracy tracking (outcome recording + metrics), Basketball/Pro Football Reference scrapers, MLB/NHL scoring (6 new functions), trends+matchup wiring. 161 tests, all CI green |
 | 2026-01-27 | Gorgon: Coverage 79%→82%, 102 new tests across 6 modules (backends 93%, collectors 99%, rich_output, interactive_runner, openai_client, gmail_client), 2274 total tests |
 | 2026-01-27 | Gorgon: Split PR #29 (5474 lines, 28 files) into 3 focused PRs, resolved cherry-pick conflicts, added prompt sanitization + 51 Slack/cost tracker tests, merged all 3 |
