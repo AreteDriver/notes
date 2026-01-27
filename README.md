@@ -79,6 +79,7 @@ Chronological record of work sessions.
 | 2026-01-27 | GitHub branch protection: Configured on 12 repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
 |------|-----|
 | 2026-01-27 | Gorgon: Added in/not_empty condition operators, fixed shell output mapping, 2353 total tests passing |
+| 2026-01-27 | RedOPS 100% complete: 5080 tests passing, all 7 scan presets producing findings, plugin system fixed, Docker verified, CI green, all subsystems operational (web, MCP, pipeline, reports, history) |
 | 2026-01-27 | RedOPS CI+Security both green — format fix (exif.py), concurrency cancelling duplicates confirmed. 12/19 repos green, 7 budget-blocked (no code issues) |
 | 2026-01-27 | CI/CD batch fix: RedOPS (497 lint fixes, security workflow CodeQL v4, TruffleHog pinned, Bandit SARIF fix, CI deps fix), concurrency groups added to 8 repos, all pushed |
 | 2026-01-27 | GameSpace: 5 features shipped — unified roster model (ESPN/Yahoo/Sleeper merge), accuracy tracking (outcome recording + metrics), Basketball/Pro Football Reference scrapers, MLB/NHL scoring (6 new functions), trends+matchup wiring. 161 tests, all CI green |
@@ -166,6 +167,10 @@ Chronological record of work sessions.
 | Test writes to real config file | Monkeypatch config path functions to return `tmp_path / "file.json"` for test isolation |
 | @testing-library/react-native v14 not found | Use v13 - v14 only has alpha/beta releases. Also use `--legacy-peer-deps` for React 19 compatibility |
 | Background agent sandbox denies cd/sed to /tmp | Use `git -C /path` instead of `cd /path && git`. Resolve conflicts in main session, not background agents |
+| `datetime.UTC` not in Python 3.10 | Use `datetime.timezone.utc` — `datetime.UTC` was added in 3.11 |
+| Pillow `get_flattened_data()` missing | Pillow 14+ renamed `getdata()`. Use `hasattr()` fallback: `img.get_flattened_data() if hasattr(img, 'get_flattened_data') else img.getdata()` |
+| Plugin abstract class not discoverable | If registry checks `BasePlugin` subclasses, intermediate ABCs must also extend BasePlugin. Add exclusion for abstract classes in registry. |
+| TruffleHog "BASE and HEAD are the same" | Use `github.event.before`/`github.event.after` for push events, not branch name |
 | Cherry-pick conflicts when splitting PR | Commits that build on each other conflict when cherry-picked independently. Resolve by keeping both sides (ours + theirs) for additive changes |
 | `str.format()` prompt injection | User input with `{__class__.__init__.__globals__}` can leak Python internals. Escape braces: `text.replace("{", "{{").replace("}", "}}")` before interpolation |
 | GitHub "not mergeable" right after push | GitHub needs a few seconds to compute merge status. Wait and retry, or check `gh pr view --json mergeable` |

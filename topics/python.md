@@ -921,6 +921,65 @@ frames[0].save(
 - `optimize=True` reduces file size
 - For further optimization, use ImageMagick: `convert -layers Optimize in.gif out.gif`
 
+---
+
+## pytest-asyncio Auto Mode
+
+**Problem:** Every async test needs `@pytest.mark.asyncio`, creating noise across hundreds of tests.
+
+**Solution:** Set `asyncio_mode = "auto"` in pyproject.toml:
+
+```toml
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+```
+
+This automatically applies the marker to all async test functions. Remove all explicit `@pytest.mark.asyncio` decorators — they become redundant warnings.
+
+**Cleanup:** After enabling, strip markers with grep:
+```bash
+grep -rn "@pytest.mark.asyncio" tests/
+# Then remove each occurrence
+```
+
+---
+
+## Pillow API Version Compatibility
+
+**Problem:** Pillow 14+ renamed `getdata()` to `get_flattened_data()`.
+
+**Error:** `AttributeError: 'JpegImagePlugin.JpegImageFile' object has no attribute 'get_flattened_data'`
+
+**Solution:** Use hasattr fallback:
+```python
+data = list(
+    img.get_flattened_data()
+    if hasattr(img, "get_flattened_data")
+    else img.getdata()
+)
+```
+
+---
+
+## datetime.UTC Python Version Compat
+
+**Problem:** `datetime.UTC` was added in Python 3.11. Using it breaks 3.10.
+
+**Error:** `ImportError: cannot import name 'UTC' from 'datetime'`
+
+**Solution:**
+```python
+# Works on 3.10+
+from datetime import datetime, timezone
+now = datetime.now(timezone.utc)
+
+# Does NOT work on 3.10
+from datetime import datetime, UTC  # AttributeError
+now = datetime.now(UTC)
+```
+
+---
+
 *Last updated: 2026-01-27*
 
 ### Ruff Format Before Commit (Critical)

@@ -280,6 +280,18 @@ concurrency:
 - uses: trufflesecurity/trufflehog@v3.88.0
 ```
 
+### TruffleHog Base/Head for Push Events
+
+**Problem:** `base: ${{ github.ref }}` and `head: ${{ github.ref }}` causes "BASE and HEAD are the same" error on push events.
+
+**Solution:** Use event-specific SHAs:
+```yaml
+- uses: trufflesecurity/trufflehog@v3.88.0
+  with:
+    base: ${{ github.event.before || github.event.pull_request.base.sha }}
+    head: ${{ github.event.after || github.event.pull_request.head.sha }}
+```
+
 ---
 
 ## Bandit SARIF Upload Failure
