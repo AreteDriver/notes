@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-27 | GameSpace: 5 features shipped — unified roster model (ESPN/Yahoo/Sleeper merge), accuracy tracking (outcome recording + metrics), Basketball/Pro Football Reference scrapers, MLB/NHL scoring (6 new functions), trends+matchup wiring. 161 tests, all CI green |
 | 2026-01-27 | Gorgon: Split PR #29 (5474 lines, 28 files) into 3 focused PRs, resolved cherry-pick conflicts, added prompt sanitization + 51 Slack/cost tracker tests, merged all 3 |
 | 2026-01-27 | GithubDesktopLinux: Fixed 2 high-severity tar vulnerabilities via npm override, 0 Dependabot alerts remaining, PR #21 merged |
 | 2026-01-27 | Chefwise: Migrated `next lint` to ESLint CLI flat config, fixed broken codemod output, 512 tests + lint + build green, PR #64 merged |
@@ -163,6 +164,8 @@ Chronological record of work sessions.
 | GitHub "not mergeable" right after push | GitHub needs a few seconds to compute merge status. Wait and retry, or check `gh pr view --json mergeable` |
 | Multiple dependabot PRs conflict after first merge | Merge in order of least conflict; later PRs may need rebase after each merge |
 | Dependabot auto-merges major version bumps | Add `ignore` rules for `version-update:semver-major` on framework packages in `dependabot.yml` |
+| Hatchling "no package found" editable install | Add `[tool.hatch.build.targets.wheel] packages = ["."]` to pyproject.toml when package root is non-standard |
+| Missing dep in pyproject.toml but in requirements.txt | Always sync both files. `pip install -e .[dev]` fails silently on missing deps if only in requirements.txt |
 | Jest test UIDs fail Firebase validation silently | Use realistic test fixtures (20+ char alphanumeric UIDs) matching production validation regexes |
 | Jest module-level `process.env.X` is undefined | Env vars captured at import time, before `beforeEach`. Set env before import or pass values explicitly in test bodies |
 | Tests pass but don't match source model | Test drift — source evolved (2-tier → 3-tier) but tests used aliases that resolved to valid-but-wrong values. Review tests when changing data models |
