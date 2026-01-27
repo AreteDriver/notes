@@ -458,6 +458,9 @@ import reactPlugin from "eslint-plugin-react";
 import nextPlugin from "@next/eslint-plugin-next";
 
 export default [
+    {
+        ignores: [".next/", "out/", "android/", "ios/", "coverage/"],
+    },
     reactPlugin.configs.flat["jsx-runtime"],
     nextPlugin.flatConfig.coreWebVitals,
     {
@@ -467,6 +470,8 @@ export default [
     },
 ];
 ```
+
+**IMPORTANT:** `eslint .` lints everything — unlike `next lint`, it has no implicit ignores. Always add ignores for build artifact dirs (`.next/`, `out/`, platform dirs, `coverage/`).
 
 ---
 
