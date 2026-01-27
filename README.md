@@ -166,6 +166,8 @@ Chronological record of work sessions.
 | Dependabot auto-merges major version bumps | Add `ignore` rules for `version-update:semver-major` on framework packages in `dependabot.yml` |
 | Hatchling "no package found" editable install | Add `[tool.hatch.build.targets.wheel] packages = ["."]` to pyproject.toml when package root is non-standard |
 | Missing dep in pyproject.toml but in requirements.txt | Always sync both files. `pip install -e .[dev]` fails silently on missing deps if only in requirements.txt |
+| CI fails on lint/format after push | Run `pytest && ruff check && ruff format --check` before every `git push`. Avoids extra fix commits |
+| Referencing undefined variable in new endpoint | When wiring new code into existing files, verify all referenced names exist in scope before committing |
 | Jest test UIDs fail Firebase validation silently | Use realistic test fixtures (20+ char alphanumeric UIDs) matching production validation regexes |
 | Jest module-level `process.env.X` is undefined | Env vars captured at import time, before `beforeEach`. Set env before import or pass values explicitly in test bodies |
 | Tests pass but don't match source model | Test drift — source evolved (2-tier → 3-tier) but tests used aliases that resolved to valid-but-wrong values. Review tests when changing data models |
