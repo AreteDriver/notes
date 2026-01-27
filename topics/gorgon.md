@@ -87,3 +87,18 @@ Missing any one causes either runtime errors or validation rejections.
 3. `stdout` (for shell steps)
 
 This allows custom output names like `review_output` to map to `stdout` without requiring users to know the internal key names.
+
+---
+
+## 2026-01-27: v1.0.0 Docs Update
+
+Bumped version 0.3.0 → 1.0.0 in `pyproject.toml` and `README.md`. Updated README with:
+- Slack integration in integrations list
+- `slack_client.py`, `resilience.py`, `skills/` in project structure
+- Skill context injection, Slack, API resilience in roadmap
+- Poetry as primary install method
+- Test count (2353) and coverage badges
+
+Fixed `QUICKSTART.md` repo URL from `test-ai.git` → `Gorgon.git`.
+
+**Branch protection bypass noted:** `git push` to main bypassed PR requirement + status checks (admin bypass enabled via ADL-20260127-006). Expected behavior for solo dev with `enforce_admins=false`.
