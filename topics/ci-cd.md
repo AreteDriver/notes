@@ -140,6 +140,22 @@ When merging multiple Dependabot PRs that touch the same files:
 - **Safe to auto-merge:** Minor/patch versions, CI action updates
 - **Review first:** Major version bumps
 
+### Blocking Major Version Bumps
+After Next.js 14→16 and ESLint 8→9 broke CI via auto-merge:
+
+```yaml
+# dependabot.yml
+ignore:
+  - dependency-name: "next"
+    update-types: ["version-update:semver-major"]
+  - dependency-name: "eslint"
+    update-types: ["version-update:semver-major"]
+  - dependency-name: "eslint-config-next"
+    update-types: ["version-update:semver-major"]
+```
+
+**Rule:** Any package with breaking migration steps (Next.js, ESLint, React, TypeScript) should have major bumps ignored in dependabot. Upgrade these manually on a branch with a migration plan.
+
 ---
 
 ## GitHub CLI Commands
@@ -217,4 +233,4 @@ jobs:
 
 ---
 
-*Last updated: 2026-01-24*
+*Last updated: 2026-01-27*

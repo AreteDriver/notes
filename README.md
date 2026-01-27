@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-27 | Chefwise: Reverted next/eslint major bumps, fixed 4 test suites (31 failures → 0), locked dependabot to minor/patch for frameworks |
 | 2026-01-27 | Batch-merged 14 dependabot PRs across 4 repos (Gorgon, Chefwise, EVE_Quartermaster, GithubDesktopLinux), resolved 3 merge conflicts |
 | 2026-01-26 | EVE_Gatekeeper: 1604 tests, MCP server 84% coverage, mobile (46 tests) + desktop (29 tests) suites verified |
 | 2026-01-26 | RedOPS: Fixed 7 test failures + 32 deprecation warnings, replaced passlib with bcrypt, 5011 tests passing, 0 warnings |
@@ -154,6 +155,10 @@ Chronological record of work sessions.
 | @testing-library/react-native v14 not found | Use v13 - v14 only has alpha/beta releases. Also use `--legacy-peer-deps` for React 19 compatibility |
 | Background agent sandbox denies cd/sed to /tmp | Use `git -C /path` instead of `cd /path && git`. Resolve conflicts in main session, not background agents |
 | Multiple dependabot PRs conflict after first merge | Merge in order of least conflict; later PRs may need rebase after each merge |
+| Dependabot auto-merges major version bumps | Add `ignore` rules for `version-update:semver-major` on framework packages in `dependabot.yml` |
+| Jest test UIDs fail Firebase validation silently | Use realistic test fixtures (20+ char alphanumeric UIDs) matching production validation regexes |
+| Jest module-level `process.env.X` is undefined | Env vars captured at import time, before `beforeEach`. Set env before import or pass values explicitly in test bodies |
+| Tests pass but don't match source model | Test drift — source evolved (2-tier → 3-tier) but tests used aliases that resolved to valid-but-wrong values. Review tests when changing data models |
 
 ---
 
