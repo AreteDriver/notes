@@ -75,7 +75,8 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
-| 2026-01-27 | GitHub branch protection: Configured on 12 private repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
+| 2026-01-27 | PII scrub + git history rewrite: Used `git-filter-repo --replace-text` to redact employer, location, emails from entire git history before making notes repo public |
+| 2026-01-27 | GitHub branch protection: Configured on 12 repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
 |------|-----|
 | 2026-01-27 | Gorgon: Added in/not_empty condition operators, fixed shell output mapping, 2353 total tests passing |
 | 2026-01-27 | RedOPS CI+Security both green — format fix (exif.py), concurrency cancelling duplicates confirmed. 12/19 repos green, 7 budget-blocked (no code issues) |
@@ -176,6 +177,7 @@ Chronological record of work sessions.
 | CI fails on lint/format after push | Run `pytest && ruff check && ruff format --check` before every `git push`. Avoids extra fix commits |
 | Ruff formatting not applied before commit | Always run `ruff format .` locally before `git commit`. CI lint job will fail with "Would reformat: <file>" error if formatting inconsistencies exist. Pattern: test files with multi-line dicts/function calls are particularly susceptible. Run `ruff format --check .` in pre-commit hook. |
 | Referencing undefined variable in new endpoint | When wiring new code into existing files, verify all referenced names exist in scope before committing |
+| PII in git history survives file edits | Editing a file only fixes HEAD. Use `git-filter-repo --replace-text replacements.txt --force` to rewrite entire history. Format: `old_text==new_text` per line. Re-add remote after (it removes origin) |
 | Jest test UIDs fail Firebase validation silently | Use realistic test fixtures (20+ char alphanumeric UIDs) matching production validation regexes |
 | Jest module-level `process.env.X` is undefined | Env vars captured at import time, before `beforeEach`. Set env before import or pass values explicitly in test bodies |
 | Tests pass but don't match source model | Test drift — source evolved (2-tier → 3-tier) but tests used aliases that resolved to valid-but-wrong values. Review tests when changing data models |

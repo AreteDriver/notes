@@ -428,6 +428,25 @@ Full security audit of AreteDriver GitHub repos and deep audit of RedOPS.
 - Pickle deserialization is a common RCE vector — prefer JSON for file caches
 - Custom header CSRF protection (`X-Requested-With`) is simpler than token-based for APIs
 
+### Git History Rewriting for PII (2026-01-27)
+When making a private repo public, editing files only fixes HEAD — PII persists in history.
+
+**Tool:** `git-filter-repo` (not `filter-branch` which is deprecated and slow)
+
+**Process:**
+1. Create replacements file (one per line): `old_text==new_text`
+2. Run: `git-filter-repo --replace-text replacements.txt --force`
+3. Re-add remote (filter-repo removes origin): `git remote add origin <url>`
+4. Force push: `git push --force origin main`
+5. Verify: `git log --all --format=%H | while read h; do git show "$h:FILE" 2>/dev/null; done | grep "PII_STRING"`
+
+**What to redact before going public:**
+- Employer names
+- Specific locations (city/state → region)
+- Email addresses
+- Exact years of experience (narrows identity)
+- Any internal project names or codenames
+
 ### New Env Vars (RedOPS)
 - REDOPS_JWT_SECRET (required)
 - DATABASE_URL (required)
