@@ -375,4 +375,36 @@ BANNED:      Press F1 → Send F1 to Windows A, B, C, D
 
 ---
 
-*Last updated: 2026-01-26*
+## 2026-01-27: GitHub Security Audit
+
+### Session Summary
+Full security audit of AreteDriver GitHub repos and deep audit of RedOPS.
+
+### Findings & Fixes
+- **GitHub profile**: Both emails (AreteDriver@gmail.com, jamesyng79@gmail.com) were publicly visible in commit history across all repos. Fixed global git email to noreply address.
+- **Missing .gitignore**: EVE_Rebellion, vdc-display, pomodoro-timer lacked .env in .gitignore. Fixed and pushed.
+- **EVE_Rebellion**: __pycache__ was tracked in git. Removed with git rm --cached.
+- **RedOPS deep audit**: 19 findings (2 critical, 6 high, 6 medium, 5 low), all fixed:
+  - CRITICAL: Hardcoded JWT secret, hardcoded demo API key
+  - HIGH: Pickle deserialization, zip-slip, arbitrary git clone for plugins, wildcard CORS+credentials, unauthenticated WebSocket, default DB creds
+  - MEDIUM: Auth disabled by default, in-memory token/session stores, missing secure cookie flag, no CSRF protection, dynamic SQL columns
+  - LOW: XOR encryption fallback, os.system() usage, missing bcrypt/PyJWT deps, process name validation, debug exception details
+- **Dead code**: Removed SimpleEncryption XOR class (no longer reachable)
+
+### Patterns Learned
+- `gh api /user/emails` reveals email visibility settings
+- GitHub API cannot change email visibility — must use UI at github.com/settings/emails
+- `git rm -r --cached` to stop tracking files already in .gitignore
+- AWS's official example access key (`AKIA...EXAMPLE`) is safe to ignore in audits
+- Pickle deserialization is a common RCE vector — prefer JSON for file caches
+- Custom header CSRF protection (`X-Requested-With`) is simpler than token-based for APIs
+
+### New Env Vars (RedOPS)
+- REDOPS_JWT_SECRET (required)
+- DATABASE_URL (required)
+- REDOPS_CORS_ORIGINS (optional, default: http://localhost:8000)
+- REDOPS_HTTPS (optional, for secure cookies)
+
+---
+
+*Last updated: 2026-01-27*
