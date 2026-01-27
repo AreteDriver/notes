@@ -447,6 +447,27 @@ async def device_event_loop():
 - App Router migration is a separate, larger effort
 - v15 gets you React 19 + modern ESLint without architecture changes
 
+### ESLint 9 Flat Config (Next.js)
+- `eslint-config-next` v15 does NOT support flat config — legacy format only
+- Use `@next/eslint-plugin-next` directly: `nextPlugin.flatConfig.coreWebVitals`
+- Need `eslint-plugin-react` `configs.flat["jsx-runtime"]` for JSX parsing (legacy config bundled this automatically)
+- The `next-lint-to-eslint-cli` codemod is broken — generates 3 errors. Write manually:
+
+```javascript
+import reactPlugin from "eslint-plugin-react";
+import nextPlugin from "@next/eslint-plugin-next";
+
+export default [
+    reactPlugin.configs.flat["jsx-runtime"],
+    nextPlugin.flatConfig.coreWebVitals,
+    {
+        rules: {
+            // your overrides
+        },
+    },
+];
+```
+
 ---
 
 *Last updated: 2026-01-27*

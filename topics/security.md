@@ -437,3 +437,71 @@ Full security audit of AreteDriver GitHub repos and deep audit of RedOPS.
 ---
 
 *Last updated: 2026-01-27*
+
+---
+
+## 2026-01-27: try/except Import Pattern for Optional Dependencies
+
+When imports exist inside try/except blocks purely to check availability (setting a flag like RICH_AVAILABLE), they need `# noqa: F401` since linters flag them as unused even though the try/except is the intended usage.
+
+### Pattern
+
+```python
+# Check for optional rich dependency
+try:
+    import rich  # noqa: F401
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+```
+
+The `# noqa: F401` tells the linter "this import is intentional and part of the try/except check." Without it, the import appears unused since the `rich` module isn't directly referenced—it's only imported to verify availability.
+
+### Why This Matters
+
+Linters (ruff, pylint, etc.) see:
+- Import statement
+- No usage of the imported name
+- Flag as unused import (F401)
+
+But the actual usage is implicit: the try/except succeeds if the import works, fails if not. That's the whole point.
+
+---
+
+## 2026-01-27: Gorgon Lint Cleanup Pattern
+
+When PRs are already merged with lint failures, fix lint directly on main rather than trying to fix branches. Applied to Gorgon PR #34 after merge.
+
+### Pattern
+
+1. **Check PR state**: Use `gh pr list --state all` before attempting fixes
+2. **Fix on main if merged**: Apply `ruff check --fix && ruff format .` directly to main branch
+3. **Manual fixes after**: Ruff auto-fixes don't catch all lint errors:
+   - **E402**: Module-level imports not at top of file
+   - **F841**: Unused variables (especially in test files)
+   - **F401**: Unused imports in try/except availability checks (use `# noqa: F401`)
+
+### Applied to Gorgon
+
+After PR #34 merged, ran lint fixes:
+
+```bash
+ruff check --fix
+ruff format .
+```
+
+Then manually fixed remaining issues:
+
+| Issue | Example | Fix |
+|-------|---------|-----|
+| E402 | Import after module code (comments/docstrings) | Move imports to top |
+| F841 | `_unused_var = func()` in tests | Prefix with `_` or remove |
+| F401 | `import rich` in try/except (optional dep check) | Add `# noqa: F401` |
+
+### When to Use
+
+- PR already merged, lint failures discovered post-merge
+- Fixing a branch would cause merge conflicts or require re-review
+- Lint is a style/quality issue, not a functional bug
+- Team agrees on the fix
+

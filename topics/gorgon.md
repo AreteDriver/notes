@@ -28,3 +28,30 @@ Added 111 tests covering previously untested modules:
 **Gotcha:** Gitleaks/pre-commit blocks fake test secrets. Used `--no-verify` for obvious test data (sk-FAKEFAKE...). Added `.gitleaks.toml` allowlist.
 
 Test count: 1874 → 1985
+
+---
+
+## 2026-01-27: PR Review Workflow Lesson
+
+Always check PR state before attempting fixes. PRs may already be merged.
+
+### Command to Check State
+```bash
+gh pr list --state all
+```
+
+Shows all PRs with their current state:
+- `OPEN`
+- `MERGED`
+- `CLOSED` (not merged)
+- `DRAFT`
+
+### Pattern Applied
+PR #34 was merged but had lint failures. Initial approach would have tried to fix the branch and reopen, but the PR was already merged. Instead, fixed lint directly on main branch after merge.
+
+### Workflow
+1. Check `gh pr list --state all` before touching anything
+2. If merged: fix on main, no PR needed
+3. If open: fix on branch, push updates
+4. If closed/draft: check if worth fixing or skip
+

@@ -77,6 +77,7 @@ Chronological record of work sessions.
 | Date | Win |
 |------|-----|
 | 2026-01-27 | Gorgon: Split PR #29 (5474 lines, 28 files) into 3 focused PRs, resolved cherry-pick conflicts, added prompt sanitization + 51 Slack/cost tracker tests, merged all 3 |
+| 2026-01-27 | Chefwise: Migrated `next lint` to ESLint CLI flat config, fixed broken codemod output, 512 tests + lint + build green, PR #64 merged |
 | 2026-01-27 | Chefwise: Reverted next/eslint major bumps, fixed 4 test suites (31 failures → 0), locked dependabot to minor/patch for frameworks |
 | 2026-01-27 | Batch-merged 14 dependabot PRs across 4 repos (Gorgon, Chefwise, EVE_Quartermaster, GithubDesktopLinux), resolved 3 merge conflicts |
 | 2026-01-26 | EVE_Gatekeeper: 1604 tests, MCP server 84% coverage, mobile (46 tests) + desktop (29 tests) suites verified |
@@ -145,6 +146,7 @@ Chronological record of work sessions.
 | Patching httpx in FastAPI endpoint | httpx imported inside function - patch at httpx module level, not endpoint module. Or use respx library for cleaner HTTP mocking |
 | FastAPI Query() defaults in tests | Query(24) returns Query object when called directly - pass params explicitly in tests: `func(hours=24)` |
 | Function named `test_*` collected by pytest | Rename non-test functions to avoid `test_` prefix (e.g., `send_test_message` not `test_webhook`) |
+| `next-lint-to-eslint-cli` codemod broken | Generates 3 errors (missing .js ext, non-iterable spread, nested extends). Write flat config manually using `@next/eslint-plugin-next` `flatConfig` API |
 | Multiplicative recovery doesn't increase | `int(3 * 1.2) = 3` - use `max(current + 1, int(current * factor))` to guarantee at least +1 |
 | AsyncMock makes all attrs async | SQLAlchemy `db.add()` is sync - set `mock_db.add = MagicMock()` explicitly |
 | FastAPI dependency not mocked | Use `app.dependency_overrides[get_dep] = lambda: mock` not `patch("...get_dep")` |
