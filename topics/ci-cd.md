@@ -361,6 +361,24 @@ on:
 
 ---
 
+## wasm-bindgen CLI Version Mismatch
+
+**Problem:** `cargo install wasm-bindgen-cli` installs latest version, but `Cargo.lock` pins an older `wasm-bindgen` crate. Schema versions must match exactly.
+
+**Error:** `rust Wasm file schema version: 0.2.106 / this binary schema version: 0.2.108`
+
+**Solution:** Pin the CLI version to match `Cargo.lock`:
+```yaml
+- name: Install wasm-bindgen-cli
+  run: cargo install wasm-bindgen-cli --version 0.2.106
+```
+
+Check locked version with: `grep -A1 'name = "wasm-bindgen"' Cargo.lock`
+
+**Applied to:** eve_rebellion_rust (2026-01-27). Pin in ci.yml, pages.yml, and release.yml.
+
+---
+
 ## Key Principles
 
 1. **CI environments are minimal** - Don't assume system packages, displays, or writable paths
@@ -372,6 +390,7 @@ on:
 7. **Add concurrency groups** - Every CI workflow should cancel duplicate runs
 8. **Verify extras exist** - pip silently ignores non-existent optional-dependencies
 9. **Use paths-ignore** - Skip CI on docs-only changes to conserve Actions minutes
+10. **Pin wasm-bindgen-cli** - Must match Cargo.lock version exactly
 
 ---
 

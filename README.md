@@ -79,6 +79,7 @@ Chronological record of work sessions.
 | 2026-01-27 | GitHub branch protection: Configured on 12 repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
 |------|-----|
 | 2026-01-27 | Gorgon: Added in/not_empty condition operators, fixed shell output mapping, 2353 total tests passing |
+| 2026-01-27 | CI green sweep: All 12 repos with CI workflows passing. Fixed Argus_Overview (unused import), vdc-portfolio (unsorted imports, unused var), MentorLinux (coverage threshold 80%→45%), EVE_Sentinel (17 ruff lint + 29 mypy type errors), eve_rebellion_rust (cargo fmt, wasm-bindgen pin to 0.2.106, missing Disintegrator/Vorton match arms). Added paths-ignore filters to 11 repos |
 | 2026-01-27 | RedOPS 100% complete: 5080 tests passing, all 7 scan presets producing findings, plugin system fixed, Docker verified, CI green, all subsystems operational (web, MCP, pipeline, reports, history) |
 | 2026-01-27 | RedOPS CI+Security both green — format fix (exif.py), concurrency cancelling duplicates confirmed. 12/19 repos green, 7 budget-blocked (no code issues) |
 | 2026-01-27 | CI/CD batch fix: RedOPS (497 lint fixes, security workflow CodeQL v4, TruffleHog pinned, Bandit SARIF fix, CI deps fix), concurrency groups added to 8 repos, all pushed |
@@ -186,6 +187,11 @@ Chronological record of work sessions.
 | Jest test UIDs fail Firebase validation silently | Use realistic test fixtures (20+ char alphanumeric UIDs) matching production validation regexes |
 | Jest module-level `process.env.X` is undefined | Env vars captured at import time, before `beforeEach`. Set env before import or pass values explicitly in test bodies |
 | Tests pass but don't match source model | Test drift — source evolved (2-tier → 3-tier) but tests used aliases that resolved to valid-but-wrong values. Review tests when changing data models |
+| wasm-bindgen schema version mismatch | `cargo install wasm-bindgen-cli` gets latest, but Cargo.lock pins older version. Pin CLI: `cargo install wasm-bindgen-cli --version 0.2.106` matching Cargo.lock |
+| Non-exhaustive match after adding enum variant | Adding variants to Rust enums breaks all `match` arms. Search for all uses of the enum before pushing |
+| SQLAlchemy `== True` triggers ruff E712 | Ruff flags `column == True` but SQLAlchemy requires it for `.where()` clauses. Use `# noqa: E712` |
+| GitHub Pages deploy fails "Not Found" | Pages must be enabled in repo Settings → Pages → Source: GitHub Actions before the workflow will succeed |
+| mypy attr-defined on renamed methods | When renaming methods, search all callers. mypy suggestions (e.g., "maybe list_needing_reanalysis?") are usually correct |
 
 ---
 
