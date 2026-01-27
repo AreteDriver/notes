@@ -895,7 +895,33 @@ ignore = [
 
 ---
 
-*Last updated: 2026-01-26*
+### Pillow Animated GIF with Per-Frame Durations
+
+**Pattern:** Save multi-frame GIF with different durations per frame using Pillow.
+
+```python
+from PIL import Image
+
+frames = [img1, img2, img3]  # List of PIL Image objects
+durations = [4000, 5000, 3000]  # Milliseconds per frame
+
+frames[0].save(
+    "output.gif",
+    save_all=True,
+    append_images=frames[1:],
+    duration=durations,  # List = per-frame timing
+    loop=0,              # 0 = infinite loop
+    optimize=True,
+)
+```
+
+**Key points:**
+- `duration` accepts a list for per-frame timing or a single int for uniform timing
+- `loop=0` means infinite loop
+- `optimize=True` reduces file size
+- For further optimization, use ImageMagick: `convert -layers Optimize in.gif out.gif`
+
+*Last updated: 2026-01-27*
 
 ### Ruff Format Before Commit (Critical)
 

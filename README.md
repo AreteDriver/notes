@@ -111,6 +111,7 @@ Chronological record of work sessions.
 | 2026-01-25 | RedOPS: Plugin system integration, Shodan/Censys intel modules, 49+ new tests |
 | 2026-01-24 | RedOPS v1.2.0: Web UI (FastAPI), MCP server, Groq provider, 6 AI providers total |
 | 2026-01-24 | RedOPS v1.1.0: Docker, notifications, PDF/STIX reports, shell completions, man page |
+| 2026-01-27 | VDC Portfolio: Demo GIF, coverage 91%→95% (163 tests), README polish, clean codebase audit |
 | 2026-01-24 | VDC Portfolio: Test coverage 84%→89%, Docker verified, CI green |
 | 2026-01-24 | Dotfiles: Migrated to git bare repo, 90 files tracked, nvim/lazygit/kitty configs |
 | 2026-01-20 | Gorgon: Workflow versioning feature complete + 86 new tests (28 API, 58 unit) |
