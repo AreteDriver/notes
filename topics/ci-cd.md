@@ -364,3 +364,92 @@ on:
 ---
 
 *Last updated: 2026-01-27*
+
+## GitHub Branch Protection Configuration
+
+**Setup:** After upgrading to GitHub Pro, configure branch protection rules on all private repos via GitHub API.
+
+**Pattern:** Use `gh api` to put branch protection:
+```bash
+gh api repos/{OWNER}/{REPO}/branches/main/protection \
+  --method PUT \
+  -f required_status_checks:strict=true \
+  -f required_status_checks:contexts='["CI","Security","Tests (3.10)"]' \
+  -f enforce_admins=false \
+  -f allow_force_pushes=false \
+  -f allow_deletions=false \
+  -f require_code_reviews=false
+```
+
+### Key Parameters
+- `enforce_admins=false` — Critical for solo devs. Allows you to bypass protection in emergencies without removing protection
+- `required_status_checks:strict=true` — Branch must be up-to-date before merge (prevents stale CI)
+- `required_status_checks:contexts` — List of required check names, must match exact job names from CI workflow
+
+### Discovering CI Job Names
+```bash
+# Get last run ID
+gh run list -R owner/repo --workflow=.github/workflows/ci.yml --limit 1 --json databaseId --jq '.[0].databaseId'
+
+# View exact job names (including matrix suffixes)
+gh run view {RUN_ID} -R owner/repo --json jobs --jq '.jobs[].name'
+```
+
+**Example output:**
+```
+Tests (3.10)
+Tests (3.11)
+Tests (3.12)
+Lint
+Type Check
+Security Scan
+```
+
+All matrix jobs must be listed individually if you want all variants required. Alternatively, use a single summary job if your workflow supports it.
+
+### Gotchas
+- Job names are case-sensitive and must include matrix suffixes like `(3.10)` or `(PostgreSQL)`
+- If a job name doesn't match exactly, the check will never complete (stays pending forever)
+- `enforce_admins=false` is intentional — admins can still merge without checks if truly necessary (e.g., emergency hotfix)
+- To check current protection settings: `gh api repos/{owner}/{repo}/branches/main/protection`
+
+### Batch Application
+Protect all repos in a list:
+```bash
+REPOS=(
+  "Gorgon"
+  "GameSpace"
+  "Chefwise"
+  "RedOPS"
+  "EVE_Rebellion"
+  "EVE_Sentinel"
+  "EVE_Quartermaster"
+  "EVE_Gatekeeper"
+  "G13_Linux"
+  "RazerControls"
+  "Argus_Overview"
+  "vdc-portfolio"
+)
+
+for repo in "${REPOS[@]}"; do
+  echo "Protecting $repo/main..."
+  gh api repos/AreteDriver/$repo/branches/main/protection \
+    --method PUT \
+    -f required_status_checks:strict=true \
+    -f required_status_checks:contexts='["CI","Lint","Security"]' \
+    -f enforce_admins=false \
+    -f allow_force_pushes=false \
+    -f allow_deletions=false
+done
+```
+
+### Workflow Impact
+- Direct pushes to main are now blocked
+- All changes must go through PRs
+- PRs require all status checks to pass
+- PRs require branch to be up-to-date (no stale PR merges)
+- Admins retain emergency bypass if needed
+
+---
+
+*Last updated: 2026-01-27*

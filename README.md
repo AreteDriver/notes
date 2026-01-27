@@ -75,6 +75,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-27 | GitHub branch protection: Configured on 12 private repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
 |------|-----|
 | 2026-01-27 | Gorgon: Added in/not_empty condition operators, fixed shell output mapping, 2353 total tests passing |
 | 2026-01-27 | RedOPS CI+Security both green — format fix (exif.py), concurrency cancelling duplicates confirmed. 12/19 repos green, 7 budget-blocked (no code issues) |
