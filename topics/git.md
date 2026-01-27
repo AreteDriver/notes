@@ -343,4 +343,16 @@ When later commits depend on earlier ones (e.g., commit 4 adds enums after commi
 
 ---
 
+## Annotated Tags Gotcha
+
+Some repos configure `git tag` to require annotated tags (via `tag.forceSignAnnotated` or similar). Bare `git tag v1.0.0` fails with "no tag message".
+
+```bash
+# Always use annotated tags for releases
+git tag -a v1.0.0 -m "v1.0.0"
+git push --tags
+```
+
+---
+
 *Last updated: 2026-01-27*
