@@ -76,6 +76,7 @@ Chronological record of work sessions.
 
 | Date | Win |
 |------|-----|
+| 2026-01-27 | Gorgon: Added in/not_empty condition operators, fixed shell output mapping, 2353 total tests passing |
 | 2026-01-27 | CI/CD batch fix: RedOPS (497 lint fixes, security workflow CodeQL v4, TruffleHog pinned, Bandit SARIF fix, CI deps fix), concurrency groups added to 8 repos, all pushed |
 | 2026-01-27 | GameSpace: 5 features shipped — unified roster model (ESPN/Yahoo/Sleeper merge), accuracy tracking (outcome recording + metrics), Basketball/Pro Football Reference scrapers, MLB/NHL scoring (6 new functions), trends+matchup wiring. 161 tests, all CI green |
 | 2026-01-27 | Gorgon: Coverage 79%→82%, 102 new tests across 6 modules (backends 93%, collectors 99%, rich_output, interactive_runner, openai_client, gmail_client), 2274 total tests |
@@ -166,6 +167,7 @@ Chronological record of work sessions.
 | GitHub "not mergeable" right after push | GitHub needs a few seconds to compute merge status. Wait and retry, or check `gh pr view --json mergeable` |
 | Multiple dependabot PRs conflict after first merge | Merge in order of least conflict; later PRs may need rebase after each merge |
 | Dependabot auto-merges major version bumps | Add `ignore` rules for `version-update:semver-major` on framework packages in `dependabot.yml` |
+| New operator missing from one validation location | Update all 4+ locations: type def, eval logic, schema, validation constants |
 | Hatchling "no package found" editable install | Add `[tool.hatch.build.targets.wheel] packages = ["."]` to pyproject.toml when package root is non-standard |
 | Missing dep in pyproject.toml but in requirements.txt | Always sync both files. `pip install -e .[dev]` fails silently on missing deps if only in requirements.txt |
 | CI fails on lint/format after push | Run `pytest && ruff check && ruff format --check` before every `git push`. Avoids extra fix commits |

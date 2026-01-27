@@ -55,3 +55,35 @@ PR #34 was merged but had lint failures. Initial approach would have tried to fi
 3. If open: fix on branch, push updates
 4. If closed/draft: check if worth fixing or skip
 
+
+---
+
+## 2026-01-27: Workflow Condition Operators + Shell Output Mapping
+
+### Changes
+- Added `in` and `not_empty` condition operators to workflow loader (`loader.py`)
+- Fixed shell output mapping in `executor.py` — custom output names now fall back to `stdout` for shell steps
+- Made `value` field optional in `ConditionConfig` for operators like `not_empty` that don't need a comparison value
+- Updated schema validation to not require `value` for `not_empty`
+- Extended E2E tests: 7 operator tests, shell output mapping, retry recovery, checkpoint resume
+- Previously-invalid YAMLs (code-review, documentation-gen, security-audit) now load successfully
+- All 2353 tests pass
+
+### Patterns Learned
+
+**Multi-location operator additions:** Adding a new operator to a validation system typically requires updates in 4+ locations:
+1. Type definition (enum/literal)
+2. Evaluation logic (the actual comparison)
+3. Schema validation (what fields are required)
+4. Validation constants (allowed values list)
+
+Missing any one causes either runtime errors or validation rejections.
+
+**Optional dataclass fields over conditional schema:** When an operator doesn't need all fields (e.g., `not_empty` doesn't need `value`), making the dataclass field optional with a default (`value: str | None = None`) is cleaner than adding conditional schema validation logic.
+
+**Shell step output mapping fallback chain:** Shell steps return `{stdout, stderr, returncode}`. The output mapping fallback is:
+1. Direct key match (user-specified name)
+2. `response` (for AI steps)
+3. `stdout` (for shell steps)
+
+This allows custom output names like `review_output` to map to `stdout` without requiring users to know the internal key names.
