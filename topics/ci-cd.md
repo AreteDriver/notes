@@ -318,6 +318,37 @@ Match CI install command to actual extras. RedOPS fix: `[dev,test]` → `[dev,we
 
 ---
 
+## Paths-Ignore Filters
+
+**Problem:** CI runs on every push, even docs-only changes (README edits, LICENSE updates), wasting Actions minutes.
+
+**Solution:** Add `paths-ignore` to skip CI on non-code changes:
+```yaml
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.github/dependabot.yml'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.github/dependabot.yml'
+```
+
+**For Rust repos**, also add `- 'assets/**'` (non-code static files).
+
+**Applied to:** 11 repos (2026-01-27). Combined with concurrency groups, this significantly reduces wasted Actions minutes.
+
+---
+
 ## Key Principles
 
 1. **CI environments are minimal** - Don't assume system packages, displays, or writable paths
@@ -328,6 +359,7 @@ Match CI install command to actual extras. RedOPS fix: `[dev,test]` → `[dev,we
 6. **Pin security action versions** - Never use `@main` for TruffleHog/Trivy/etc.
 7. **Add concurrency groups** - Every CI workflow should cancel duplicate runs
 8. **Verify extras exist** - pip silently ignores non-existent optional-dependencies
+9. **Use paths-ignore** - Skip CI on docs-only changes to conserve Actions minutes
 
 ---
 
