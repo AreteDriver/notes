@@ -77,6 +77,7 @@ Chronological record of work sessions.
 | Date | Win |
 |------|-----|
 | 2026-01-27 | Gorgon: Split PR #29 (5474 lines, 28 files) into 3 focused PRs, resolved cherry-pick conflicts, added prompt sanitization + 51 Slack/cost tracker tests, merged all 3 |
+| 2026-01-27 | GithubDesktopLinux: Fixed 2 high-severity tar vulnerabilities via npm override, 0 Dependabot alerts remaining, PR #21 merged |
 | 2026-01-27 | Chefwise: Migrated `next lint` to ESLint CLI flat config, fixed broken codemod output, 512 tests + lint + build green, PR #64 merged |
 | 2026-01-27 | Chefwise: Reverted next/eslint major bumps, fixed 4 test suites (31 failures → 0), locked dependabot to minor/patch for frameworks |
 | 2026-01-27 | Batch-merged 14 dependabot PRs across 4 repos (Gorgon, Chefwise, EVE_Quartermaster, GithubDesktopLinux), resolved 3 merge conflicts |
