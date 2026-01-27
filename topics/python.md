@@ -481,6 +481,31 @@ with patch("mymodule.NewAdapter") as mock:
 
 **Tip:** Use `grep -r "OldClass" tests/` to find all mocks that need updating.
 
+### Mocking Decorated Methods
+
+**Problem:** Methods wrapped with decorators (retry, resilience, rate limiting) call real APIs even when mocked.
+
+**Why:** `importlib.reload()` with patched decorators is fragile — decorator binding happens at class definition time.
+
+**Solution:** Mock the decorated method directly with `patch.object`:
+
+```python
+# WRONG - reload doesn't reliably rebind decorators
+@patch("module.resilient_call", noop_decorator)
+def test_api(self):
+    importlib.reload(mod)  # Fragile, may still call real API
+    client.generate("prompt")
+
+# CORRECT - bypass decorators by mocking the method
+with patch.object(client, "_call_api", return_value="mocked"):
+    result = client.generate("prompt")
+    assert result == "mocked"
+
+# For async
+with patch.object(client, "_call_api_async", new_callable=AsyncMock, return_value="ok"):
+    result = await client.generate_async("prompt")
+```
+
 ---
 
 ## Security Scanning with Bandit
