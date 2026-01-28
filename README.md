@@ -118,6 +118,7 @@ Chronological record of work sessions.
 | 2026-01-25 | RedOPS: Plugin system integration, Shodan/Censys intel modules, 49+ new tests |
 | 2026-01-24 | RedOPS v1.2.0: Web UI (FastAPI), MCP server, Groq provider, 6 AI providers total |
 | 2026-01-24 | RedOPS v1.1.0: Docker, notifications, PDF/STIX reports, shell completions, man page |
+| 2026-01-28 | VDC Portfolio: Project complete — observability wired into all 3 apps, OPERATIONS.md + BARCODE_SCANNING.md docs, README updated (9 tabs, shared module breakdown, 7 docs), todo list marked 100% complete |
 | 2026-01-28 | VDC Portfolio: CI/CD hardening, Docker build fix, location audit filter |
 | 2026-01-27 | VDC Portfolio: All 3 apps deployed to Railway (production, logistics, display), demo GIF, coverage 91%→95% (163 tests), README polish with live demo badge |
 | 2026-01-24 | VDC Portfolio: Test coverage 84%→89%, Docker verified, CI green |
