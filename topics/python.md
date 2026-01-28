@@ -980,7 +980,142 @@ now = datetime.now(UTC)
 
 ---
 
-*Last updated: 2026-01-27*
+---
+
+## Protocol Pattern and isinstance/issubclass Testing
+
+### Protocol with @property Members Breaks issubclass()
+
+**Problem:** `typing.Protocol` classes with `@property` members cause `TypeError` when used with `issubclass()`.
+
+```python
+from typing import Protocol
+
+@runtime_checkable
+class SyncClient(Protocol):
+    @property
+    def client_id(self) -> str:
+        ...
+
+# WRONG - raises TypeError
+if issubclass(MyClass, SyncClient):
+    ...
+
+# TypeError: issubclass() arg 1 must be a class
+```
+
+**Root cause:** Properties are descriptors, not regular attributes. `issubclass()` doesn't handle structural typing with descriptors.
+
+**Solution 1: Use isinstance() with bare instance**
+
+```python
+# Create bare instance without calling __init__
+test_obj = SyncClient.__new__(SyncClient)
+
+# Check conformance via isinstance()
+if isinstance(test_obj, SyncClient):
+    print("Conforms to protocol")
+```
+
+**Solution 2: Use @runtime_checkable on Protocol**
+
+```python
+from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class SyncClient(Protocol):
+    @property
+    def client_id(self) -> str:
+        ...
+
+# Now isinstance() works (not issubclass)
+instance = MyClass()
+if isinstance(instance, SyncClient):
+    print("Instance conforms")
+```
+
+**Key insight:** `isinstance()` checks structural typing dynamically; `issubclass()` only works on nominal types (actual class hierarchies).
+
+**Pattern:**
+- Define Protocols for contracts (optional, structural)
+- Keep ABCs for actual inheritance chains
+- Use Protocols + `isinstance()` for conformance testing
+- Protocols are additive — don't replace ABCs
+
+### Protocol Design: Additive Contracts
+
+Protocols define what a type *must be able to do*, not what it *is*. Use alongside ABCs:
+
+```python
+from abc import ABC
+from typing import Protocol, runtime_checkable
+
+# Abstract base — enforces inheritance
+class BaseClient(ABC):
+    @abstractmethod
+    def connect(self) -> None:
+        ...
+
+# Protocol — structural contract
+@runtime_checkable
+class SyncClient(Protocol):
+    def execute(self, query: str) -> list:
+        ...
+
+    @property
+    def client_id(self) -> str:
+        ...
+
+# Implementation can inherit ABC and conform to Protocol
+class PostgresClient(BaseClient):
+    def __init__(self):
+        self._id = "pg-001"
+
+    def connect(self) -> None:
+        ...
+
+    def execute(self, query: str) -> list:
+        ...
+
+    @property
+    def client_id(self) -> str:
+        return self._id
+
+# Check both
+assert isinstance(PostgresClient(), BaseClient)  # Nominal
+assert isinstance(PostgresClient(), SyncClient)  # Structural
+```
+
+**When to use each:**
+- **ABC:** Enforcing a contract for subclasses
+- **Protocol:** Verifying structural conformance without inheritance
+- **Both:** Combine for maximum expressiveness
+
+### Testing Protocol Conformance
+
+```python
+def test_client_protocol():
+    """Verify MyClient conforms to SyncClient protocol."""
+    # Create bare instance without __init__
+    client = MyClient.__new__(MyClient)
+
+    # Test structural conformance
+    assert isinstance(client, SyncClient), "MyClient must conform to SyncClient protocol"
+
+    # Verify required methods exist
+    assert hasattr(client, "execute")
+    assert callable(client.execute)
+
+    # Verify required properties exist
+    assert hasattr(client, "client_id")
+    assert isinstance(type(client).client_id, property)
+```
+
+**Reference:** [PEP 544 - Structural Subtyping](https://peps.python.org/pep-0544/)
+
+---
+
+*Last updated: 2026-01-28*
 
 ### Ruff Format Before Commit (Critical)
 
