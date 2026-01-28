@@ -484,3 +484,30 @@ done
 ---
 
 *Last updated: 2026-01-27*
+
+
+---
+
+## Pip Cache in GitHub Actions
+
+Use setup-python built-in cache: cache: pip. Caches ~/.cache/pip between runs.
+
+---
+
+## Consolidating requirements.txt into pyproject.toml
+
+Use pyproject.toml as single source of truth. CI: pip install -e .[dev]
+Gotcha: readme field in pyproject.toml must reference file present in Docker context.
+
+---
+
+## pytest --cov Scope Gotcha
+
+Multiple --cov= flags with --cov-fail-under measures ALL paths combined.
+Including untestable Streamlit app.py files drops coverage from 91% to 60%.
+Solution: scope to testable modules only (shared, modules dirs).
+Rule: Never include framework entry points in coverage paths.
+
+---
+
+*Last updated: 2026-01-28*

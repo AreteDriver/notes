@@ -37,6 +37,7 @@ Living documentation for AI-assisted development. Shared reference between Claud
 | Topic | File |
 |-------|------|
 | CI/CD & GitHub Actions | [topics/ci-cd.md](topics/ci-cd.md) |
+| Docker | [topics/docker.md](topics/docker.md) |
 | Flutter & Firebase | [topics/flutter.md](topics/flutter.md) |
 | Frontend Patterns | [topics/frontend.md](topics/frontend.md) |
 | Git Workflow | [topics/git.md](topics/git.md) |
@@ -117,6 +118,7 @@ Chronological record of work sessions.
 | 2026-01-25 | RedOPS: Plugin system integration, Shodan/Censys intel modules, 49+ new tests |
 | 2026-01-24 | RedOPS v1.2.0: Web UI (FastAPI), MCP server, Groq provider, 6 AI providers total |
 | 2026-01-24 | RedOPS v1.1.0: Docker, notifications, PDF/STIX reports, shell completions, man page |
+| 2026-01-28 | VDC Portfolio: CI/CD hardening, Docker build fix, location audit filter |
 | 2026-01-27 | VDC Portfolio: All 3 apps deployed to Railway (production, logistics, display), demo GIF, coverage 91%→95% (163 tests), README polish with live demo badge |
 | 2026-01-24 | VDC Portfolio: Test coverage 84%→89%, Docker verified, CI green |
 | 2026-01-24 | Dotfiles: Migrated to git bare repo, 90 files tracked, nvim/lazygit/kitty configs |
@@ -193,6 +195,8 @@ Chronological record of work sessions.
 | Non-exhaustive match after adding enum variant | Adding variants to Rust enums breaks all `match` arms. Search for all uses of the enum before pushing |
 | SQLAlchemy `== True` triggers ruff E712 | Ruff flags `column == True` but SQLAlchemy requires it for `.where()` clauses. Use `# noqa: E712` |
 | GitHub Pages deploy fails "Not Found" | Pages must be enabled in repo Settings → Pages → Source: GitHub Actions before the workflow will succeed |
+| pyproject.toml readme excluded by .dockerignore | Use README.md and add README.md exception to .dockerignore |
+| pytest --cov includes untestable Streamlit apps | Scope --cov to testable modules only, exclude framework entry points |
 | mypy attr-defined on renamed methods | When renaming methods, search all callers. mypy suggestions (e.g., "maybe list_needing_reanalysis?") are usually correct |
 
 ---
@@ -233,4 +237,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-27 (Session 10)*
+*Last updated: 2026-01-28 (Session 11)*
