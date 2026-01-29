@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | App launcher cleanup: Upgraded G13_Linux 1.2.1→1.5.6, LikX 3.28→3.30. Removed old AppImages, duplicate desktop entries (Chrome, Steam, SnipTool). Used NoDisplay override for system duplicates. All apps at latest GitHub releases |
 | 2026-01-29 | EVE_Gatekeeper: Merged PRs #17 (website version endpoint) + #18 (desktop production + mobile offline). Fixed 29 mypy type errors across 7 files — starmap import path, type annotations, casts for cache access. 1757 tests, all CI green |
 | 2026-01-29 | Eve-Nexus-APP: Resolved all 8 dependabot PRs — 7 major version bumps. Migrated ESLint 8→9 with flat config, auto-fixed 683 prettier errors. Fixed pre-existing peer dep conflict (react-navigation 6/7 mismatch). 0 vulnerabilities |
 | 2026-01-29 | Argus_Overview v2.8.5: Full project cleanup — installed via pipx, cleaned 1.9GB build artifacts, updated 11 doc files (Automation→Cycle Control, removed Visual Alerts refs), closed #32 (Windows fcntl), deleted 5 stale branches, merged PR #33. 1571 tests, lint clean, PyPI synced |
@@ -209,6 +210,7 @@ Chronological record of work sessions.
 | ESLint 9 "couldn't find config to extend" | ESLint 9 requires flat config (`eslint.config.js`). Old `.eslintrc.*` format not supported. Migrate manually or use `@eslint/eslintrc` FlatCompat |
 | mypy infers wrong type from earlier loop variable | Reusing variable name in nested loops (e.g., `for conn in thera:` then `for conn in pochven:`) causes type conflict. Use distinct names (`conn`, `pconn`) |
 | `tuple(sorted([a, b]))` incompatible with `set[tuple[str, str]]` | `sorted()` returns list, `tuple()` on list creates `tuple[str, ...]`. Use `cast(tuple[str, str], tuple(sorted([a, b])))` |
+| Duplicate app in launcher from /usr/share | Can't delete without sudo. Create user override in `~/.local/share/applications/` with same filename + `NoDisplay=true` to hide it |
 
 ---
 
