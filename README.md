@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | Gorgon WebSocket: Real-time execution updates via WebSocket. Backend: ConnectionManager, Broadcaster (thread-safe queue), ExecutionManager callbacks. Frontend: reconnection with exponential backoff, auto-subscribe to running executions, connection indicator. 33 new tests, 3193 total passing |
 | 2026-01-29 | README polish: ClaudeSkills (major overhaul — badges, problem statement, 27 skills table, comparison section), Razer_Controls (screenshot section + placeholders), Animus (screenshot section + codecov badge). Portfolio-ready structure for all 3 |
 | 2026-01-29 | Security fixes: Chefwise (npm audit fix for tar+diff vulns), GithubDesktopLinux (tar override ^7.5.7). 0 high-severity vulns remaining across all repos |
 | 2026-01-29 | CI sweep #3: Fixed 3 repos. Chefwise — added missing `trackUpgradeClick` export (Turbopack build failure). EVE_Quartermaster — added `pull-requests: read` permission to secret-scan workflow (Gitleaks 403 on dependabot PRs). Argus_Overview — lowered coverage threshold 90→88%, fixed unused imports in intel tests. Merged tar security PR #24. All 3 green |
@@ -222,6 +223,7 @@ Chronological record of work sessions.
 | `tuple(sorted([a, b]))` incompatible with `set[tuple[str, str]]` | `sorted()` returns list, `tuple()` on list creates `tuple[str, ...]`. Use `cast(tuple[str, str], tuple(sorted([a, b])))` |
 | Duplicate app in launcher from /usr/share | Can't delete without sudo. Create user override in `~/.local/share/applications/` with same filename + `NoDisplay=true` to hide it |
 | Python Protocol @property fails isinstance() | `@runtime_checkable` Protocol with `@property` doesn't match in Python 3.10/3.11. Use `skipif(sys.version_info < (3, 12))` for tests or use attribute annotation without property decorator |
+| Rate limiter test flaky at minute boundary | Sliding window tests with 60s default window fail if `acquire()` and `get_current()` run in different minute windows. Use longer window (3600s) in tests to avoid boundary crossing |
 
 ---
 
