@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | Argus_Overview: Removed Visual Alerts feature for CCP EULA compliance. PR #31 merged — deleted alert_detector.py, UI panels, tests (-1946 lines). Fixed 4 test failures in test_settings_tab.py (stale AlertsPanel imports, category count 6→5). 1571 tests passing |
 | 2026-01-27 | PII scrub + git history rewrite: Used `git-filter-repo --replace-text` to redact employer, location, emails from entire git history before making notes repo public |
 | 2026-01-27 | GitHub branch protection: Configured on 12 repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
 |------|-----|
