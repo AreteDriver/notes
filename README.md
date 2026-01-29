@@ -76,6 +76,8 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | EVE_Gatekeeper: Merged PRs #17 (website version endpoint) + #18 (desktop production + mobile offline). Fixed 29 mypy type errors across 7 files — starmap import path, type annotations, casts for cache access. 1757 tests, all CI green |
+| 2026-01-29 | Eve-Nexus-APP: Resolved all 8 dependabot PRs — 7 major version bumps. Migrated ESLint 8→9 with flat config, auto-fixed 683 prettier errors. Fixed pre-existing peer dep conflict (react-navigation 6/7 mismatch). 0 vulnerabilities |
 | 2026-01-29 | Argus_Overview v2.8.5: Full project cleanup — installed via pipx, cleaned 1.9GB build artifacts, updated 11 doc files (Automation→Cycle Control, removed Visual Alerts refs), closed #32 (Windows fcntl), deleted 5 stale branches, merged PR #33. 1571 tests, lint clean, PyPI synced |
 | 2026-01-29 | Argus_Overview: Removed Visual Alerts feature for CCP EULA compliance. PR #31 merged — deleted alert_detector.py, UI panels, tests (-1946 lines). Fixed 4 test failures in test_settings_tab.py (stale AlertsPanel imports, category count 6→5). 1571 tests passing |
 | 2026-01-27 | PII scrub + git history rewrite: Used `git-filter-repo --replace-text` to redact employer, location, emails from entire git history before making notes repo public |
@@ -203,6 +205,10 @@ Chronological record of work sessions.
 | mypy attr-defined on renamed methods | When renaming methods, search all callers. mypy suggestions (e.g., "maybe list_needing_reanalysis?") are usually correct |
 | pipx "No apps associated with package" | pipx metadata detection can fail on reinstall. Use `pipx install pkg --force --pip-args='--force-reinstall'` to force fresh detection |
 | Windows user tries Linux PyPI package | Linux-only modules like `fcntl` cause `ModuleNotFoundError`. Point users to platform-specific downloads in README |
+| mypy "Source file found twice under different module names" | Wrong import path (e.g., `from starmap` vs `from backend.starmap`). Fix import to use full module path matching project structure |
+| ESLint 9 "couldn't find config to extend" | ESLint 9 requires flat config (`eslint.config.js`). Old `.eslintrc.*` format not supported. Migrate manually or use `@eslint/eslintrc` FlatCompat |
+| mypy infers wrong type from earlier loop variable | Reusing variable name in nested loops (e.g., `for conn in thera:` then `for conn in pochven:`) causes type conflict. Use distinct names (`conn`, `pconn`) |
+| `tuple(sorted([a, b]))` incompatible with `set[tuple[str, str]]` | `sorted()` returns list, `tuple()` on list creates `tuple[str, ...]`. Use `cast(tuple[str, str], tuple(sorted([a, b])))` |
 
 ---
 
@@ -242,4 +248,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-29 (Session 12)*
+*Last updated: 2026-01-29 (Session 13)*
