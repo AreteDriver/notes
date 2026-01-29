@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | Linux SnipTool retired: Analyzed codebase for unique features (CLI, history browser, GNOME hotkeys), confirmed LikX has all needed functionality. Deleted /opt/linux-sniptool/, removed desktop entries, archived design PDF. LikX is now sole screenshot tool |
 | 2026-01-29 | App launcher cleanup: Upgraded G13_Linux 1.2.1→1.5.6, LikX 3.28→3.30. Removed old AppImages, duplicate desktop entries (Chrome, Steam, SnipTool). Used NoDisplay override for system duplicates. All apps at latest GitHub releases |
 | 2026-01-29 | EVE_Gatekeeper: Merged PRs #17 (website version endpoint) + #18 (desktop production + mobile offline). Fixed 29 mypy type errors across 7 files — starmap import path, type annotations, casts for cache access. 1757 tests, all CI green |
 | 2026-01-29 | Eve-Nexus-APP: Resolved all 8 dependabot PRs — 7 major version bumps. Migrated ESLint 8→9 with flat config, auto-fixed 683 prettier errors. Fixed pre-existing peer dep conflict (react-navigation 6/7 mismatch). 0 vulnerabilities |
