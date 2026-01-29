@@ -76,6 +76,8 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | Animus CI fixed: Python 3.10/3.11 Protocol conformance test failure. @runtime_checkable Protocol with @property doesn't work with isinstance() on older Python. Fixed by skipif(sys.version_info < (3,12)) — static typing still validates |
+| 2026-01-29 | YokaiBlade archived: Closed all 6 issues, archived Unity game dev repo. Educational Unity project, complete as reference |
 | 2026-01-29 | Linux SnipTool retired: Analyzed codebase for unique features (CLI, history browser, GNOME hotkeys), confirmed LikX has all needed functionality. Deleted /opt/linux-sniptool/, removed desktop entries, archived design PDF. LikX is now sole screenshot tool |
 | 2026-01-29 | App launcher cleanup: Upgraded G13_Linux 1.2.1→1.5.6, LikX 3.28→3.30. Removed old AppImages, duplicate desktop entries (Chrome, Steam, SnipTool). Used NoDisplay override for system duplicates. All apps at latest GitHub releases |
 | 2026-01-29 | EVE_Gatekeeper: Merged PRs #17 (website version endpoint) + #18 (desktop production + mobile offline). Fixed 29 mypy type errors across 7 files — starmap import path, type annotations, casts for cache access. 1757 tests, all CI green |
@@ -213,6 +215,7 @@ Chronological record of work sessions.
 | mypy infers wrong type from earlier loop variable | Reusing variable name in nested loops (e.g., `for conn in thera:` then `for conn in pochven:`) causes type conflict. Use distinct names (`conn`, `pconn`) |
 | `tuple(sorted([a, b]))` incompatible with `set[tuple[str, str]]` | `sorted()` returns list, `tuple()` on list creates `tuple[str, ...]`. Use `cast(tuple[str, str], tuple(sorted([a, b])))` |
 | Duplicate app in launcher from /usr/share | Can't delete without sudo. Create user override in `~/.local/share/applications/` with same filename + `NoDisplay=true` to hide it |
+| Python Protocol @property fails isinstance() | `@runtime_checkable` Protocol with `@property` doesn't match in Python 3.10/3.11. Use `skipif(sys.version_info < (3, 12))` for tests or use attribute annotation without property decorator |
 
 ---
 
