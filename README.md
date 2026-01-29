@@ -223,7 +223,7 @@ Chronological record of work sessions.
 | `tuple(sorted([a, b]))` incompatible with `set[tuple[str, str]]` | `sorted()` returns list, `tuple()` on list creates `tuple[str, ...]`. Use `cast(tuple[str, str], tuple(sorted([a, b])))` |
 | Duplicate app in launcher from /usr/share | Can't delete without sudo. Create user override in `~/.local/share/applications/` with same filename + `NoDisplay=true` to hide it |
 | Python Protocol @property fails isinstance() | `@runtime_checkable` Protocol with `@property` doesn't match in Python 3.10/3.11. Use `skipif(sys.version_info < (3, 12))` for tests or use attribute annotation without property decorator |
-| Rate limiter test flaky at minute boundary | Sliding window tests with 60s default window fail if `acquire()` and `get_current()` run in different minute windows. Use longer window (3600s) in tests to avoid boundary crossing |
+| Sliding window `get_current()` returns 0 after acquires | Test runs near minute boundary — `acquire()` uses window N, `get_current()` uses window N+1. Use longer window (3600s) in tests to avoid crossing boundaries |
 
 ---
 
