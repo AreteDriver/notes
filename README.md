@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | Animus case study: Enhanced docs/CASE_STUDY.md for portfolio — competitive positioning table, "Why This Matters" section (AI Eng/Solutions Eng/DevRel), demo points for interviews, architecture diagram, updated metrics (18K LOC, 333 tests, 5/6 phases complete) |
 | 2026-01-29 | Gorgon WebSocket: Real-time execution updates via WebSocket. Backend: ConnectionManager, Broadcaster (thread-safe queue), ExecutionManager callbacks. Frontend: reconnection with exponential backoff, auto-subscribe to running executions, connection indicator. 33 new tests, 3193 total passing |
 | 2026-01-29 | README polish: ClaudeSkills (major overhaul — badges, problem statement, 27 skills table, comparison section), Razer_Controls (screenshot section + placeholders), Animus (screenshot section + codecov badge). Portfolio-ready structure for all 3 |
 | 2026-01-29 | Security fixes: Chefwise (npm audit fix for tar+diff vulns), GithubDesktopLinux (tar override ^7.5.7). 0 high-severity vulns remaining across all repos |
