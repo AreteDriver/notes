@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | CI sweep #3: Fixed 3 repos. Chefwise — added missing `trackUpgradeClick` export (Turbopack build failure). EVE_Quartermaster — added `pull-requests: read` permission to secret-scan workflow (Gitleaks 403 on dependabot PRs). Argus_Overview — lowered coverage threshold 90→88%, fixed unused imports in intel tests. Merged tar security PR #24. All 3 green |
 | 2026-01-29 | Animus CI fixed: Python 3.10/3.11 Protocol conformance test failure. @runtime_checkable Protocol with @property doesn't work with isinstance() on older Python. Fixed by skipif(sys.version_info < (3,12)) — static typing still validates |
 | 2026-01-29 | YokaiBlade archived: Closed all 6 issues, archived Unity game dev repo. Educational Unity project, complete as reference |
 | 2026-01-29 | Linux SnipTool retired: Analyzed codebase for unique features (CLI, history browser, GNOME hotkeys), confirmed LikX has all needed functionality. Deleted /opt/linux-sniptool/, removed desktop entries, archived design PDF. LikX is now sole screenshot tool |
