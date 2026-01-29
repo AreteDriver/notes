@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | Argus_Overview v2.8.5: Full project cleanup — installed via pipx, cleaned 1.9GB build artifacts, updated 11 doc files (Automation→Cycle Control, removed Visual Alerts refs), closed #32 (Windows fcntl), deleted 5 stale branches, merged PR #33. 1571 tests, lint clean, PyPI synced |
 | 2026-01-29 | Argus_Overview: Removed Visual Alerts feature for CCP EULA compliance. PR #31 merged — deleted alert_detector.py, UI panels, tests (-1946 lines). Fixed 4 test failures in test_settings_tab.py (stale AlertsPanel imports, category count 6→5). 1571 tests passing |
 | 2026-01-27 | PII scrub + git history rewrite: Used `git-filter-repo --replace-text` to redact employer, location, emails from entire git history before making notes repo public |
 | 2026-01-27 | GitHub branch protection: Configured on 12 repos (GitHub Pro unlock). Pattern: `gh api repos/{owner}/{repo}/branches/main/protection --method PUT` with exact CI job names from `gh run view` + `enforce_admins: false` for emergency bypass. Workflow: PRs now required for all main pushes |
@@ -200,6 +201,8 @@ Chronological record of work sessions.
 | pyproject.toml readme excluded by .dockerignore | Use README.md and add README.md exception to .dockerignore |
 | pytest --cov includes untestable Streamlit apps | Scope --cov to testable modules only, exclude framework entry points |
 | mypy attr-defined on renamed methods | When renaming methods, search all callers. mypy suggestions (e.g., "maybe list_needing_reanalysis?") are usually correct |
+| pipx "No apps associated with package" | pipx metadata detection can fail on reinstall. Use `pipx install pkg --force --pip-args='--force-reinstall'` to force fresh detection |
+| Windows user tries Linux PyPI package | Linux-only modules like `fcntl` cause `ModuleNotFoundError`. Point users to platform-specific downloads in README |
 
 ---
 
@@ -239,4 +242,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-28 (Session 11)*
+*Last updated: 2026-01-29 (Session 12)*
