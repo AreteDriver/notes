@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-30 | Repo drift audit + consolidation: Reverted ESI from Argus (belongs in Gatekeeper). Archived duplicates (AI-Orchestra→Gorgon redirect, ClaudeSkills→ai_skills redirect). Deleted Eve-Nexus-APP after migrating screens/services/contexts to Gatekeeper. Archived vdc-production/vdc-logistics/vdc-display (consolidated into vdc-portfolio). Marked EVE_Rebellion Python as legacy (Rust rewrite is active) |
 | 2026-01-30 | Argus_Overview ESI Integration: REVERTED — feature belongs in EVE_Gatekeeper (intel/nav tool), not Argus (multiboxing tool). Keeping projects focused on their core purpose |
 | 2026-01-30 | Gorgon Desktop App + Self-Improve: Tauri 2.0 desktop wrapper (Rust/React), Chat UI with SSE streaming, Supervisor agent for multi-agent orchestration, Self-Improvement system (safety guards, sandbox, approval gates, rollback, PR manager). 3222 tests passing, frontend builds clean |
 | 2026-01-30 | VDC Portfolio Phase 3: notifications (Slack/Discord/email), auth (bcrypt, roles), REST API (FastAPI :8504), E2E tests (Playwright). 483 tests, 90% coverage, +7046 LOC |
@@ -237,6 +238,7 @@ Chronological record of work sessions.
 | Sliding window `get_current()` returns 0 after acquires | Test runs near minute boundary — `acquire()` uses window N, `get_current()` uses window N+1. Use longer window (3600s) in tests to avoid crossing boundaries |
 | Tauri 2.0 `shell-open` feature missing | Tauri 2.0 API changed — `shell-open` feature no longer exists. Use `features = []` or check Tauri 2.0 migration guide |
 | Ruff F841 unused variable for placeholder | Use `_ = expr` convention for intentionally unused values (reserved for future use) |
+| GitHub repo redirect follows to wrong target | `gh repo archive AreteDriver/OldName` follows redirect to `NewName` and archives wrong repo. Verify repo names with `gh repo view` before destructive operations |
 
 ---
 
