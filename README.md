@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-30 | Gorgon Desktop App + Self-Improve: Tauri 2.0 desktop wrapper (Rust/React), Chat UI with SSE streaming, Supervisor agent for multi-agent orchestration, Self-Improvement system (safety guards, sandbox, approval gates, rollback, PR manager). 3222 tests passing, frontend builds clean |
 | 2026-01-30 | VDC Portfolio Phase 3: notifications (Slack/Discord/email), auth (bcrypt, roles), REST API (FastAPI :8504), E2E tests (Playwright). 483 tests, 90% coverage, +7046 LOC |
 | 2026-01-30 | GameSpace: 7 features via parallel agents — token streaming, budget enforcement, sports guardrails, Slack/Discord webhooks, rate limiting, auto-outcome recording from ESPN box scores, smart query classifier (multi-signal). 778 tests, all green |
 | 2026-01-29 | ai_skills: Renamed repo from ClaudeSkills, cloned to projects. Audited 27 skills (all A grade). Migrated 9 priority skills to ~/.claude/skills/ for native /skill-name invocation (eve-esi, gamedev, streamlit, mentor-linux, perf, backup, monitor, systemd, networking). Updated README with installation instructions. Skills now invokable as /eve-esi, /gamedev, etc. |
@@ -233,6 +234,8 @@ Chronological record of work sessions.
 | Duplicate app in launcher from /usr/share | Can't delete without sudo. Create user override in `~/.local/share/applications/` with same filename + `NoDisplay=true` to hide it |
 | Python Protocol @property fails isinstance() | `@runtime_checkable` Protocol with `@property` doesn't match in Python 3.10/3.11. Use `skipif(sys.version_info < (3, 12))` for tests or use attribute annotation without property decorator |
 | Sliding window `get_current()` returns 0 after acquires | Test runs near minute boundary — `acquire()` uses window N, `get_current()` uses window N+1. Use longer window (3600s) in tests to avoid crossing boundaries |
+| Tauri 2.0 `shell-open` feature missing | Tauri 2.0 API changed — `shell-open` feature no longer exists. Use `features = []` or check Tauri 2.0 migration guide |
+| Ruff F841 unused variable for placeholder | Use `_ = expr` convention for intentionally unused values (reserved for future use) |
 
 ---
 
