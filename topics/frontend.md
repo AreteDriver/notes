@@ -475,4 +475,92 @@ export default [
 
 ---
 
-*Last updated: 2026-01-27*
+## SSE Streaming for Chat Interfaces
+
+### Server-Sent Events Pattern
+For AI chat interfaces that stream responses token-by-token:
+
+```typescript
+async function streamDecision(
+  request: DecisionRequest,
+  onChunk: (chunk: string) => void,
+  onComplete?: (response: FullResponse) => void
+): Promise<void> {
+  const response = await fetch(`${API_URL}/decide/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  });
+
+  const reader = response.body?.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+    // Parse SSE format: "data: content\n\n"
+    const events = chunk
+      .split('\n')
+      .filter((line) => line.startsWith('data: '))
+      .map((line) => line.slice(6));
+
+    for (const event of events) {
+      if (event === '[DONE]') continue;
+      onChunk(event);
+    }
+  }
+}
+```
+
+### Streaming Message Component
+```tsx
+function StreamingMessage({ content, isStreaming }: Props) {
+  const [showCursor, setShowCursor] = useState(true);
+
+  // Blinking cursor while streaming
+  useEffect(() => {
+    if (!isStreaming) return;
+    const interval = setInterval(() => setShowCursor((p) => !p), 500);
+    return () => clearInterval(interval);
+  }, [isStreaming]);
+
+  return (
+    <div className="message">
+      <p>{content}</p>
+      {isStreaming && showCursor && (
+        <span className="inline-block w-2 h-5 bg-primary animate-pulse" />
+      )}
+    </div>
+  );
+}
+```
+
+### State Management for Streaming
+```typescript
+const [streamingContent, setStreamingContent] = useState('');
+const [isStreaming, setIsStreaming] = useState(false);
+
+const handleSend = async (content: string) => {
+  setStreamingContent('');
+  setIsStreaming(true);
+
+  try {
+    await api.decideStream(
+      request,
+      (chunk) => setStreamingContent((prev) => prev + chunk),
+      (response) => {
+        // Add final message to history
+        setIsStreaming(false);
+      }
+    );
+  } finally {
+    setIsStreaming(false);
+  }
+};
+```
+
+---
+
+*Last updated: 2026-01-29*
