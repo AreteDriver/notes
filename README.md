@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-30 | EVE_Gatekeeper Streamlit MVP: Route planner with danger overlay. Interactive Plotly map (5432 systems), security/risk color overlays, click-to-select origin/dest, 3 routing profiles (shortest/safer/paranoid), hop-by-hop route table. Direct backend imports (no FastAPI needed). 1985 tests still passing |
 | 2026-01-30 | GitHub profile + portfolio update: Updated AreteDriver README (added Animus, GameSpace, EVE tools section, fixed eve_rebellion_rust link). Updated portfolio README (current versions, removed VDC, reorganized sections). CI health check: 27 green, 1 benign failure (existing tag) |
 | 2026-01-30 | EVE_Rebellion Python deleted: Harvested design docs (DESIGN_PHILOSOPHY.md, CONTROLLER_DESIGN.md, CINEMATIC_DESIGN.md, ACE_CHARACTER_MOMENTS.md), procedural audio reference, game data JSONs to eve_rebellion_rust/docs/harvested_from_python/. Rust version is sole active project |
 | 2026-01-30 | Repo drift audit + consolidation: Reverted ESI from Argus (belongs in Gatekeeper). Archived duplicates (AI-Orchestra→Gorgon redirect, ClaudeSkills→ai_skills redirect). Deleted Eve-Nexus-APP after migrating screens/services/contexts to Gatekeeper. Archived vdc-production/vdc-logistics/vdc-display (consolidated into vdc-portfolio). Marked EVE_Rebellion Python as legacy (Rust rewrite is active) |
