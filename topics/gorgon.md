@@ -1,3 +1,28 @@
+## 2026-01-29: Migration Versioning + Test Isolation Fix
+
+### Issue
+106 test failures (14 failed, 92 errors) after adding new migrations.
+
+### Root Causes
+1. **Duplicate migration version**: Both `005_mcp_connectors.sql` and `005_user_settings.sql` existed → `UNIQUE constraint failed: schema_migrations.version`
+2. **Brute force state leakage**: `BruteForceProtection` is a singleton that accumulates state across test classes → tests hitting 429 rate limits
+
+### Fixes
+1. Renamed `005_user_settings.sql` → `007_user_settings.sql`
+2. Added brute force state clearing to `test_api_mcp.py` fixture:
+```python
+protection = get_brute_force_protection()
+protection._attempts.clear()
+protection._total_blocked = 0
+protection._total_allowed = 0
+```
+
+### Patterns
+**Migration file naming**: Always verify no duplicate version numbers exist before adding new migrations. Use `ls migrations/` to check sequence.
+
+**Singleton test isolation**: When a protection/rate-limiting class is a singleton, test fixtures must clear its state. Look for `_attempts`, counters, or similar accumulating fields.
+
+---
 
 ## 2026-01-27: PR #29 Split + Security Hardening
 
