@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | GameSpace: Token tracking + budget monitoring. Fixed streaming endpoint gap (wasn't persisting tokens to DB). Added BudgetConfig model, migration, GET/PUT /budget and GET /budget/alerts endpoints. Streaming now yields metadata dict with token counts + full response. 10 new tests, 585 total passing |
 | 2026-01-29 | Argus_Overview v2.9.0 production audit: 1642 tests passing, 89% coverage, 0 TODOs/FIXMEs, 0 bare excepts, 0 deprecation warnings, 0 open issues/PRs. Updated README v2.8→v2.9, added CHANGELOG v2.9.0 section with Intel Channel Parser feature. PyPI v2.9.0 published. Production ready for users |
 | 2026-01-29 | CI sweep #4: Gorgon lint fix (removed unused imports: datetime, patch, ExecutionMetrics; removed unused `conn` variable in test_websocket.py) + format fix (2 test files). Chefwise Next.js security bump 15.5.10→16.1.6 (GHSA-5f7q-jpqc-wp7h PPR memory exhaustion). AI-Orchestra confirmed as Gorgon redirect. All key repos green |
 | 2026-01-29 | Gorgon case study: Enhanced docs/CASE_STUDY.md for portfolio — architecture diagram (5-layer system), competitive positioning vs LangChain/AutoGPT/custom scripts, 5 demo points for interviews, "Why This Matters" section (AI Eng/Solutions Eng/Platform Eng), deployment tiers (Docker→K8s), updated metrics (85K+ LOC, 3600+ tests, 10 agent roles, 6 integrations) |
