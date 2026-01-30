@@ -76,7 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
-| 2026-01-30 | GameSpace: 5 features — token streaming persistence, budget enforcement (402), sports-only guardrails (keyword filter + prompt), Slack/Discord budget webhooks, session rate limiting (sliding window + Redis). 652 tests (+67), all CI green |
+| 2026-01-30 | GameSpace: 7 features via parallel agents — token streaming, budget enforcement, sports guardrails, Slack/Discord webhooks, rate limiting, auto-outcome recording from ESPN box scores, smart query classifier (multi-signal). 778 tests, all green |
 | 2026-01-29 | ai_skills: Renamed repo from ClaudeSkills, cloned to projects. Audited 27 skills (all A grade). Migrated 9 priority skills to ~/.claude/skills/ for native /skill-name invocation (eve-esi, gamedev, streamlit, mentor-linux, perf, backup, monitor, systemd, networking). Updated README with installation instructions. Skills now invokable as /eve-esi, /gamedev, etc. |
 | 2026-01-30 | VDC Portfolio: 4 features via parallel agents — WebSocket real-time updates, mobile-responsive UI, historical analytics, alert system. 92 new tests (261 total), +4797 LOC, CI green |
 | 2026-01-29 | GameSpace: Token tracking + budget monitoring. Fixed streaming endpoint gap (wasn't persisting tokens to DB). Added BudgetConfig model, migration, GET/PUT /budget and GET /budget/alerts endpoints. Streaming now yields metadata dict with token counts + full response. 10 new tests, 585 total passing |
