@@ -76,7 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
-| 2026-01-30 | Argus_Overview ESI Integration: Phase 1 jump distance calculation for intel reports. ESI client (rate limiting, exponential backoff), UniverseCache (8437 bundled systems from SDE), RouteService (jump calculation with 5-min LRU cache). Added Jumps column to intel table with color-coding. 30 new tests (1672 total), httpx dependency added |
+| 2026-01-30 | Argus_Overview ESI Integration: REVERTED — feature belongs in EVE_Gatekeeper (intel/nav tool), not Argus (multiboxing tool). Keeping projects focused on their core purpose |
 | 2026-01-30 | Gorgon Desktop App + Self-Improve: Tauri 2.0 desktop wrapper (Rust/React), Chat UI with SSE streaming, Supervisor agent for multi-agent orchestration, Self-Improvement system (safety guards, sandbox, approval gates, rollback, PR manager). 3222 tests passing, frontend builds clean |
 | 2026-01-30 | VDC Portfolio Phase 3: notifications (Slack/Discord/email), auth (bcrypt, roles), REST API (FastAPI :8504), E2E tests (Playwright). 483 tests, 90% coverage, +7046 LOC |
 | 2026-01-30 | GameSpace: 7 features via parallel agents — token streaming, budget enforcement, sports guardrails, Slack/Discord webhooks, rate limiting, auto-outcome recording from ESPN box scores, smart query classifier (multi-signal). 778 tests, all green |
