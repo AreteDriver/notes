@@ -563,4 +563,56 @@ const handleSend = async (content: string) => {
 
 ---
 
-*Last updated: 2026-01-29*
+## zkillboard WebSocket Integration
+
+### Connection Pattern
+```typescript
+const ZKILLBOARD_WS_URL = 'wss://zkillboard.com/websocket/';
+
+const ws = new WebSocket(ZKILLBOARD_WS_URL);
+
+ws.onopen = () => {
+  // Subscribe to killstream
+  ws.send(JSON.stringify({
+    action: 'sub',
+    channel: 'killstream'
+  }));
+};
+
+ws.onmessage = (event) => {
+  // zKillboard sends raw killmail JSON (NOT wrapped in type/payload)
+  const killmail = JSON.parse(event.data);
+  // killmail has: killmail_id, solar_system_id, killmail_time, victim, attackers, zkb
+};
+```
+
+### Key Points
+- zkillboard WebSocket sends ESI killmail + zkb metadata merged
+- NOT wrapped in `{type, payload}` - raw killmail JSON
+- Subscribe message: `{action: 'sub', channel: 'killstream'}`
+- Kill frequency varies based on EVE Online activity
+- During quiet periods (downtime, weekdays), kills can be sparse
+
+### Environment-Based Mock/Real Toggle
+```typescript
+// .env.local
+NEXT_PUBLIC_USE_MOCK_KILLS=true  // Use mock data
+NEXT_PUBLIC_USE_MOCK_KILLS=false // Use real zkillboard
+
+// In hook
+const envUseMock = process.env.NEXT_PUBLIC_USE_MOCK_KILLS === 'true';
+const { useMock = envUseMock } = options;
+```
+
+### Reconnection with Exponential Backoff
+```typescript
+const backoffDelay = Math.min(
+  reconnectDelay * Math.pow(2, reconnectAttempts - 1),
+  60000  // Cap at 60 seconds
+);
+setTimeout(connect, backoffDelay);
+```
+
+---
+
+*Last updated: 2026-01-30*
