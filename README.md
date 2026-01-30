@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-01-29 | ai_skills: Renamed repo from ClaudeSkills, cloned to projects. Audited 27 skills (all A grade). Migrated 9 priority skills to ~/.claude/skills/ for native /skill-name invocation (eve-esi, gamedev, streamlit, mentor-linux, perf, backup, monitor, systemd, networking). Updated README with installation instructions. Skills now invokable as /eve-esi, /gamedev, etc. |
 | 2026-01-30 | VDC Portfolio: 4 features via parallel agents — WebSocket real-time updates, mobile-responsive UI, historical analytics, alert system. 92 new tests (261 total), +4797 LOC, CI green |
 | 2026-01-29 | GameSpace: Token tracking + budget monitoring. Fixed streaming endpoint gap (wasn't persisting tokens to DB). Added BudgetConfig model, migration, GET/PUT /budget and GET /budget/alerts endpoints. Streaming now yields metadata dict with token counts + full response. 10 new tests, 585 total passing |
 | 2026-01-29 | Argus_Overview v2.9.0 production audit: 1642 tests passing, 89% coverage, 0 TODOs/FIXMEs, 0 bare excepts, 0 deprecation warnings, 0 open issues/PRs. Updated README v2.8→v2.9, added CHANGELOG v2.9.0 section with Intel Channel Parser feature. PyPI v2.9.0 published. Production ready for users |
