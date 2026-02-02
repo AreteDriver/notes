@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-02 | Argus_Overview: Fixed Linux AppImage CI build. Added xvfb-run wrapper for PyInstaller (pynput X11 import issue), changed spec to COLLECT for directory output. CI now fully green |
 | 2026-02-02 | Argus_Overview: Test coverage 92%→93% (97% excl. Windows). 55+ new tests for intel_tab.py (77%→93%) and main_window_v21.py (79%→89%). Added alert sound files (info/warning/danger/critical.wav). Created Windows build config (Argus_Overview.spec + GitHub Actions workflow for cross-platform CI/CD). 1798 tests passing |
 | 2026-02-02 | Gorgon roadmap 100% complete: Plugin marketplace (models, catalog, installer with checksum verification, multi-source install). Multi-tenant support (orgs, members, invites, role hierarchy RBAC). Task cancellation in chat streaming (asyncio.Event). AI analysis in self-improvement. 3358 tests passing (+47) |
 | 2026-02-02 | Argus_Overview: Test coverage 90%→92%, API docs. log_watcher.py 79%→100% (UTF-16-LE parsing, file rotation, polling). platform/linux.py 77%→95% (window ops, screen geometry, capture edge cases). Created docs/API.md (637 lines) covering platform abstraction, intel parsing, alerts. 1759 tests passing |
@@ -246,6 +247,8 @@ Chronological record of work sessions.
 | Tauri 2.0 `shell-open` feature missing | Tauri 2.0 API changed — `shell-open` feature no longer exists. Use `features = []` or check Tauri 2.0 migration guide |
 | Ruff F841 unused variable for placeholder | Use `_ = expr` convention for intentionally unused values (reserved for future use) |
 | GitHub repo redirect follows to wrong target | `gh repo archive AreteDriver/OldName` follows redirect to `NewName` and archives wrong repo. Verify repo names with `gh repo view` before destructive operations |
+| PyInstaller + pynput "failed to acquire X connection" in CI | pynput imports X11 at module scan time. Wrap build with `xvfb-run -a` to provide virtual display during analysis |
+| PyInstaller spec creates single exe but script expects directory | AppImage packaging needs directory structure. Use COLLECT in spec file: `exe = EXE(..., [])` then `coll = COLLECT(exe, a.binaries, ...)` |
 
 ---
 
