@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-02 | Argus_Overview: intel_tab.py coverage 91%→96%. Added 7 tests for _update_log_dir_label, _add_channel (QInputDialog), _remove_channel, _show_context_menu. Fixed channel selection test (lowercase matching). 1808 tests passing |
 | 2026-02-02 | Argus_Overview v3.0.2: Unified version strings across UI (__version__ from package). Fixed CI build failures (xvfb-run, COLLECT, removed redundant workflow). Verified AppImage launch. Archived Windows repo. PyPI + GitHub release with all artifacts |
 | 2026-02-02 | Argus_Overview: Fixed Linux AppImage CI build. Added xvfb-run wrapper for PyInstaller (pynput X11 import issue), changed spec to COLLECT for directory output. CI now fully green |
 | 2026-02-02 | Argus_Overview: Test coverage 92%→93% (97% excl. Windows). 55+ new tests for intel_tab.py (77%→93%) and main_window_v21.py (79%→89%). Added alert sound files (info/warning/danger/critical.wav). Created Windows build config (Argus_Overview.spec + GitHub Actions workflow for cross-platform CI/CD). 1798 tests passing |

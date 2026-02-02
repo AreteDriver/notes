@@ -154,6 +154,56 @@ def mock_redis():
     return mock
 ```
 
+### PySide6 Segfaults on Python 3.12
+
+**Problem:** Tests involving Qt signal/slot connections segfault on Python 3.12 (not 3.11).
+
+**Symptom:** `Fatal Python error: Segmentation fault` when connecting to signals and emitting them.
+
+**Root cause:** PySide6 and Python 3.12 have compatibility issues with certain signal patterns.
+
+**Solution:** Skip affected tests on Python 3.12:
+
+```python
+import sys
+import pytest
+
+@pytest.mark.skipif(
+    sys.version_info >= (3, 12),
+    reason="PySide6 segfault on Python 3.12 - Qt signal/slot issue",
+)
+def test_signal_emission(self, qapp, ...):
+    # Test that connects to signal and emits
+    signal_handler = MagicMock()
+    widget.some_signal.connect(signal_handler)
+    widget.do_something()  # Segfaults on 3.12
+    signal_handler.assert_called_once()
+```
+
+**Also applies to:**
+- Tests calling methods that create QMenu and exec()
+- Tests with complex Qt widget hierarchies
+- Tests using QInputDialog or other modal dialogs
+
+### Testing Qt Context Menus (QMenu)
+
+**Problem:** `QMenu.exec()` blocks waiting for user input, hanging tests.
+
+**Solution:** Test early-return paths or mock deeply:
+
+```python
+def test_context_menu_no_selection(self, qapp, mock_settings):
+    """Test context menu returns early when nothing selected."""
+    tab = MyTab(mock_settings)
+
+    # Mock to return None (nothing selected)
+    tab.get_selected_item = MagicMock(return_value=None)
+
+    from PySide6.QtCore import QPoint
+    # If early return works, this completes without blocking
+    tab._show_context_menu(QPoint(0, 0))
+```
+
 ---
 
 ## Project Structure
