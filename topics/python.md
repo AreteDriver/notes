@@ -1433,3 +1433,59 @@ def test_different_systems_no_cooldown():
     assert signal_handler.call_count == 2  # Both triggered
 ```
 
+### Testing Qt Widgets Without Event Loop
+
+**Pattern:** Use module-scoped QApplication fixture.
+
+```python
+import pytest
+from PySide6.QtWidgets import QApplication
+
+@pytest.fixture(scope="module")
+def qapp():
+    """Create QApplication for tests - reuse across module."""
+    app = QApplication.instance()
+    if app is None:
+        app = QApplication([])
+    yield app
+
+def test_table_widget(qapp):
+    """Test table operations."""
+    from myapp.ui.intel_tab import IntelLogTable
+
+    table = IntelLogTable()
+    assert table.rowCount() == 0
+
+    table.add_report(make_report())
+    assert table.rowCount() == 1
+```
+
+**Testing widget selection:**
+```python
+def test_selection_emits_signal(qapp):
+    """Test row selection triggers signal."""
+    table = IntelLogTable()
+    table.add_report(make_report())
+
+    signal_handler = MagicMock()
+    table.entry_selected.connect(signal_handler)
+
+    table.selectRow(0)  # Programmatic selection
+
+    signal_handler.assert_called_once()
+```
+
+**Mocking methods without full Qt:**
+```python
+def create_mock_window():
+    """Create testable window mock without Qt init."""
+    from myapp.ui.main_window import MainWindow
+
+    window = MagicMock(spec=MainWindow)
+    window.logger = MagicMock()
+
+    # Bind real method to mock
+    window._toggle_visibility = lambda: MainWindow._toggle_visibility(window)
+    return window
+```
+
