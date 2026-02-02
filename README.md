@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-02 | Argus_Overview v3.0.2: Unified version strings across UI (__version__ from package). Fixed CI build failures (xvfb-run, COLLECT, removed redundant workflow). Verified AppImage launch. Archived Windows repo. PyPI + GitHub release with all artifacts |
 | 2026-02-02 | Argus_Overview: Fixed Linux AppImage CI build. Added xvfb-run wrapper for PyInstaller (pynput X11 import issue), changed spec to COLLECT for directory output. CI now fully green |
 | 2026-02-02 | Argus_Overview: Test coverage 92%→93% (97% excl. Windows). 55+ new tests for intel_tab.py (77%→93%) and main_window_v21.py (79%→89%). Added alert sound files (info/warning/danger/critical.wav). Created Windows build config (Argus_Overview.spec + GitHub Actions workflow for cross-platform CI/CD). 1798 tests passing |
 | 2026-02-02 | Gorgon roadmap 100% complete: Plugin marketplace (models, catalog, installer with checksum verification, multi-source install). Multi-tenant support (orgs, members, invites, role hierarchy RBAC). Task cancellation in chat streaming (asyncio.Event). AI analysis in self-improvement. 3358 tests passing (+47) |
@@ -249,6 +250,7 @@ Chronological record of work sessions.
 | GitHub repo redirect follows to wrong target | `gh repo archive AreteDriver/OldName` follows redirect to `NewName` and archives wrong repo. Verify repo names with `gh repo view` before destructive operations |
 | PyInstaller + pynput "failed to acquire X connection" in CI | pynput imports X11 at module scan time. Wrap build with `xvfb-run -a` to provide virtual display during analysis |
 | PyInstaller spec creates single exe but script expects directory | AppImage packaging needs directory structure. Use COLLECT in spec file: `exe = EXE(..., [])` then `coll = COLLECT(exe, a.binaries, ...)` |
+| Version strings out of sync across UI | Hardcoded version in window title, tray, logs diverges from pyproject.toml. Import `__version__` from package and use f-strings: `f"App v{__version__}"` |
 
 ---
 
