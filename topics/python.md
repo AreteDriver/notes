@@ -1255,3 +1255,181 @@ ruff format --check . && ruff check . || {
 - Pattern: Always run both `ruff format .` and `ruff check .` before `git push`
 - Test files with multi-line dicts/function calls particularly prone to this
 
+---
+
+## Testing File Operations with UTF-16-LE
+
+**Use case:** EVE Online chat logs use UTF-16-LE encoding.
+
+**Pattern:** Create temp files with proper encoding for realistic tests.
+
+```python
+import tempfile
+from pathlib import Path
+
+def test_utf16le_file_reading():
+    """Test reading UTF-16-LE encoded files (EVE chat logs)."""
+    with tempfile.NamedTemporaryFile(mode="wb", suffix=".txt", delete=False) as f:
+        content = "[ 2026.01.15 12:30:45 ] Player > message\n"
+        f.write(content.encode("utf-16-le"))
+        filepath = Path(f.name)
+
+    try:
+        # Read with proper encoding
+        with open(filepath, encoding="utf-16-le", errors="ignore") as f:
+            lines = f.readlines()
+        assert len(lines) == 1
+        assert "Player" in lines[0]
+    finally:
+        filepath.unlink()
+```
+
+**Testing file rotation/truncation:**
+```python
+def test_file_truncation_detection():
+    """Test detecting file truncation (log rotation)."""
+    watcher = FileWatcher()
+
+    with tempfile.NamedTemporaryFile(mode="wb", suffix=".txt", delete=False) as f:
+        f.write(b"initial content")
+        filepath = Path(f.name)
+
+    try:
+        # First read sets position
+        watcher.tail_file(filepath)
+        initial_pos = watcher.file_positions[filepath]
+
+        # Truncate file (simulate rotation)
+        with open(filepath, "wb") as f:
+            f.write(b"")
+
+        # Next read should detect truncation and reset
+        watcher.tail_file(filepath)
+        assert watcher.file_positions[filepath] == 0
+    finally:
+        filepath.unlink()
+```
+
+---
+
+## Mocking Subprocess for System Tools
+
+**Pattern:** Mock subprocess.run for testing code that calls system binaries (xdotool, wmctrl, xrandr).
+
+```python
+from unittest.mock import MagicMock, patch
+import subprocess
+
+def test_get_window_list():
+    """Test parsing wmctrl output."""
+    mock_result = MagicMock()
+    mock_result.returncode = 0
+    mock_result.stdout = b"0x03800003  0 hostname EVE - CharOne\n0x03800004  0 hostname Firefox\n"
+
+    with patch("mymodule.subprocess.run", return_value=mock_result):
+        windows = get_window_list()
+
+    assert len(windows) == 2
+    assert windows[0] == ("0x03800003", "EVE - CharOne")
+
+def test_subprocess_timeout():
+    """Test handling subprocess timeout."""
+    with patch(
+        "mymodule.subprocess.run",
+        side_effect=subprocess.TimeoutExpired("cmd", 2),
+    ):
+        result = activate_window("0x12345")
+
+    assert result is False
+
+def test_subprocess_not_found():
+    """Test handling missing binary."""
+    with patch(
+        "mymodule.subprocess.run",
+        side_effect=FileNotFoundError("xdotool not found"),
+    ):
+        result = move_window("0x12345", 0, 0, 100, 100)
+
+    assert result is None
+```
+
+**Key patterns:**
+- `returncode` + `stdout` for success cases
+- `side_effect=TimeoutExpired` for timeout
+- `side_effect=FileNotFoundError` for missing binary
+- Always test the failure paths—they're where bugs hide
+
+---
+
+## Testing PySide6/Qt Signals
+
+**Pattern:** Use MagicMock as signal handler to verify emissions.
+
+```python
+from unittest.mock import MagicMock
+from PySide6.QtCore import QObject, Signal
+
+class AlertDispatcher(QObject):
+    alert_triggered = Signal(object, object)  # (report, alert_type)
+
+def test_signal_emission():
+    """Test signal is emitted with correct args."""
+    dispatcher = AlertDispatcher()
+
+    signal_handler = MagicMock()
+    dispatcher.alert_triggered.connect(signal_handler)
+
+    report = IntelReport(system="HED-GP", threat_level=ThreatLevel.DANGER)
+    dispatcher.dispatch(report)
+
+    signal_handler.assert_called_once()
+    call_args = signal_handler.call_args[0]
+    assert call_args[0].system == "HED-GP"
+    assert call_args[1] == AlertType.VISUAL_BORDER
+
+def test_signal_not_emitted_when_disabled():
+    """Test signal suppression."""
+    config = AlertConfig(enabled=False)
+    dispatcher = AlertDispatcher(config=config)
+
+    signal_handler = MagicMock()
+    dispatcher.alert_triggered.connect(signal_handler)
+
+    dispatcher.dispatch(make_report())
+
+    signal_handler.assert_not_called()
+```
+
+**Testing cooldown/rate limiting:**
+```python
+def test_cooldown_prevents_rapid_alerts():
+    """Test cooldown blocks duplicate alerts."""
+    config = AlertConfig(cooldown_seconds=60)
+    dispatcher = AlertDispatcher(config=config)
+
+    signal_handler = MagicMock()
+    dispatcher.alert_triggered.connect(signal_handler)
+
+    report = make_report(system="HED-GP")
+
+    # First dispatch works
+    dispatcher.dispatch(report)
+    assert signal_handler.call_count == 1
+
+    # Second dispatch blocked by cooldown
+    dispatcher.dispatch(report)
+    assert signal_handler.call_count == 1  # Still 1
+
+def test_different_systems_no_cooldown():
+    """Test different systems don't share cooldown."""
+    dispatcher = AlertDispatcher(config=AlertConfig(cooldown_seconds=60))
+
+    signal_handler = MagicMock()
+    dispatcher.alert_triggered.connect(signal_handler)
+
+    dispatcher.dispatch(make_report(system="HED-GP"))
+    dispatcher.dispatch(make_report(system="1DQ1-A"))
+
+    assert signal_handler.call_count == 2  # Both triggered
+```
+
