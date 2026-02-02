@@ -1115,7 +1115,99 @@ def test_client_protocol():
 
 ---
 
-*Last updated: 2026-01-28*
+*Last updated: 2026-02-02*
+
+---
+
+## Cross-Platform Abstraction Pattern
+
+### Factory Functions with Platform Detection
+
+**Pattern:** Use abstract base classes + factory functions for cross-platform code.
+
+```python
+# platform/base.py
+from abc import ABC, abstractmethod
+
+class WindowManager(ABC):
+    @abstractmethod
+    def get_window_list(self) -> list[tuple[str, str]]:
+        """Get list of (window_id, title) tuples."""
+        ...
+
+    @abstractmethod
+    def activate_window(self, window_id: str) -> bool:
+        ...
+
+# platform/linux.py
+class WindowManagerLinux(WindowManager):
+    def get_window_list(self):
+        # Use wmctrl, xdotool
+        result = subprocess.run(["wmctrl", "-l"], capture_output=True)
+        ...
+
+# platform/windows.py
+class WindowManagerWindows(WindowManager):
+    def get_window_list(self):
+        # Use pywin32
+        import win32gui
+        ...
+
+# platform/__init__.py
+import sys
+
+def is_linux() -> bool:
+    return sys.platform.startswith("linux")
+
+def is_windows() -> bool:
+    return sys.platform == "win32"
+
+def get_window_manager() -> WindowManager:
+    if is_linux():
+        from .linux import WindowManagerLinux
+        return WindowManagerLinux()
+    elif is_windows():
+        from .windows import WindowManagerWindows
+        return WindowManagerWindows()
+    raise RuntimeError(f"Unsupported platform: {sys.platform}")
+```
+
+### pyproject.toml Platform Extras
+
+**Pattern:** Use optional dependencies for platform-specific packages.
+
+```toml
+[project.optional-dependencies]
+linux = ["python-xlib>=0.33"]
+windows = ["pywin32>=306"]
+dev = ["pytest", "ruff", "mypy"]
+
+# Installation:
+# pip install -e ".[linux]"      # Linux
+# pip install -e ".[windows]"    # Windows
+# pip install -e ".[dev,linux]"  # Dev + Linux
+```
+
+### Testing Platform Code
+
+**Pattern:** Mock factory functions, not platform implementations.
+
+```python
+def test_window_operations():
+    mock_wm = MagicMock()
+    mock_wm.get_window_list.return_value = [("0x123", "Window 1")]
+
+    with patch("mymodule.get_window_manager", return_value=mock_wm):
+        result = my_function_that_uses_windows()
+        mock_wm.get_window_list.assert_called_once()
+```
+
+**Benefits:**
+- Tests run on any platform (mocked)
+- CI can run full test suite without platform deps
+- Platform-specific code is isolated and testable
+
+---
 
 ### Ruff Format Before Commit (Critical)
 

@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-02 | Argus_Overview v3.0.0: Cross-platform consolidation — unified Linux (X11) + Windows (Win32) codebase via platform abstraction layer. Factory functions auto-select implementation. 90% coverage (1698 tests), CI matrix builds both platforms. Archived Argus_Overview_Windows repo with redirect. pyproject.toml extras: `pip install -e ".[linux]"` or `".[windows]"` |
 | 2026-01-30 | EVE_Gatekeeper Streamlit MVP: Route planner with danger overlay. Interactive Plotly map (5432 systems), security/risk color overlays, click-to-select origin/dest, 3 routing profiles (shortest/safer/paranoid), hop-by-hop route table. Direct backend imports (no FastAPI needed). 1985 tests still passing |
 | 2026-01-30 | GitHub profile + portfolio update: Updated AreteDriver README (added Animus, GameSpace, EVE tools section, fixed eve_rebellion_rust link). Updated portfolio README (current versions, removed VDC, reorganized sections). CI health check: 27 green, 1 benign failure (existing tag) |
 | 2026-01-30 | EVE_Rebellion Python deleted: Harvested design docs (DESIGN_PHILOSOPHY.md, CONTROLLER_DESIGN.md, CINEMATIC_DESIGN.md, ACE_CHARACTER_MOMENTS.md), procedural audio reference, game data JSONs to eve_rebellion_rust/docs/harvested_from_python/. Rust version is sole active project |
@@ -281,4 +282,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-01-30 (Session 15)*
+*Last updated: 2026-02-02 (Session 16)*
