@@ -1,3 +1,32 @@
+## 2026-02-02: Roadmap Completion — Plugin Marketplace + Multi-Tenant
+
+### What was done
+Completed all remaining Gorgon roadmap items:
+1. **Plugin Marketplace** — `src/test_ai/plugins/models.py`, `marketplace.py`, `installer.py`
+   - Full catalog/search/browse with SQLite persistence
+   - Release versioning with checksum verification
+   - Multi-source installation (marketplace, GitHub, URL, local)
+   - 37 tests
+2. **Multi-Tenant Support** — `src/test_ai/auth/tenants.py`
+   - Organization CRUD with slug generation
+   - Membership roles (owner/admin/member/viewer) with hierarchy
+   - Invitation system with token-based acceptance
+   - Permission checking with role inheritance
+   - 37 tests
+3. **Code TODOs** — Task cancellation (asyncio.Event), job details fetch, AI analysis in self-improvement
+
+### Patterns
+**Role hierarchy for RBAC:** Store hierarchy as dict `{VIEWER: 0, MEMBER: 1, ADMIN: 2, OWNER: 3}`. Check permission with `user_level >= required_level`. Simpler than checking role combinations.
+
+**Plugin source abstraction:** Use enum (`PluginSource.MARKETPLACE | GITHUB | URL | LOCAL`) to route installation logic. Each source has different download/verification flows but same installation outcome.
+
+**Invite token flow:** Generate secure token with `secrets.token_urlsafe(32)`, store in DB with expiry. Accept flow: lookup token → verify not expired → create membership → mark accepted. Revoke = delete row.
+
+### Test count
+3311 → 3358 (+47 from marketplace + tenant modules)
+
+---
+
 ## 2026-01-29: Migration Versioning + Test Isolation Fix
 
 ### Issue

@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-02 | Gorgon roadmap 100% complete: Plugin marketplace (models, catalog, installer with checksum verification, multi-source install). Multi-tenant support (orgs, members, invites, role hierarchy RBAC). Task cancellation in chat streaming (asyncio.Event). AI analysis in self-improvement. 3358 tests passing (+47) |
 | 2026-02-02 | Argus_Overview: Test coverage 90%→92%, API docs. log_watcher.py 79%→100% (UTF-16-LE parsing, file rotation, polling). platform/linux.py 77%→95% (window ops, screen geometry, capture edge cases). Created docs/API.md (637 lines) covering platform abstraction, intel parsing, alerts. 1759 tests passing |
 | 2026-02-02 | Argus_Overview v3.0.0: Cross-platform consolidation — unified Linux (X11) + Windows (Win32) codebase via platform abstraction layer. Factory functions auto-select implementation. 90% coverage (1698 tests), CI matrix builds both platforms. Archived Argus_Overview_Windows repo with redirect. pyproject.toml extras: `pip install -e ".[linux]"` or `".[windows]"` |
 | 2026-01-30 | EVE_Gatekeeper Streamlit MVP: Route planner with danger overlay. Interactive Plotly map (5432 systems), security/risk color overlays, click-to-select origin/dest, 3 routing profiles (shortest/safer/paranoid), hop-by-hop route table. Direct backend imports (no FastAPI needed). 1985 tests still passing |
