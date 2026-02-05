@@ -455,7 +455,109 @@ When making a private repo public, editing files only fixes HEAD — PII persist
 
 ---
 
-*Last updated: 2026-01-27*
+*Last updated: 2026-02-04*
+
+---
+
+## 2026-02-04: CodeQL Security Scanning
+
+GitHub CodeQL finds security and code quality issues. Enabled on flagship repos via GitHub Actions.
+
+### Setup Workflow
+
+```yaml
+# .github/workflows/codeql.yml
+name: CodeQL Security Scan
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly Monday 6am
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: python
+      - uses: github/codeql-action/analyze@v3
+```
+
+### Common Alerts and Fixes
+
+| Alert | Severity | Fix |
+|-------|----------|-----|
+| `py/path-injection` | High | Sanitize filenames: `re.sub(r"[^a-zA-Z0-9_-]", "-", name)` + `path.is_relative_to(base)` |
+| `py/incomplete-url-substring-sanitization` | High | Use `urlparse(url).hostname in ALLOWED_HOSTS` |
+| `py/empty-except` | Low | Add explanatory comment: `except Exception: pass  # Reason` |
+| `py/unnecessary-lambda` | Low | Replace `lambda x: func(x)` with `func` |
+| `py/import-and-import-from` | Low | Move local imports to module top or consolidate |
+| `py/ineffectual-statement` | Low | Assign to variable or assert result |
+
+### Path Injection Prevention
+
+```python
+import re
+from pathlib import Path
+
+def save_file(user_name: str, content: str, base_dir: Path) -> Path:
+    # Sanitize filename
+    safe_name = re.sub(r"[^a-zA-Z0-9_-]", "-", user_name.lower())
+    safe_name = safe_name.strip("-")[:50] or "default"
+
+    filepath = base_dir / f"{safe_name}.txt"
+
+    # Verify path stays within base directory
+    if not filepath.resolve().is_relative_to(base_dir.resolve()):
+        raise ValueError("Path traversal detected")
+
+    filepath.write_text(content)
+    return filepath
+```
+
+### URL Host Validation
+
+```python
+from urllib.parse import urlparse
+
+ALLOWED_HOSTS = {"github.com", "raw.githubusercontent.com"}
+
+def validate_github_url(url: str) -> bool:
+    """Validate URL is actually a GitHub URL."""
+    parsed = urlparse(url)
+    return parsed.hostname in ALLOWED_HOSTS
+```
+
+### When Empty-Except is Acceptable
+
+Add comments explaining why silent catch is intentional:
+
+```python
+# Best-effort cleanup - device may be disconnected
+try:
+    device.close()
+except Exception:
+    pass  # Best-effort cleanup, device may already be closed
+
+# Optional feature loading
+try:
+    from optional_dep import feature
+    HAS_FEATURE = True
+except ImportError:
+    HAS_FEATURE = False  # Feature disabled without dep
+
+# Graceful degradation
+try:
+    result = enhanced_operation()
+except Exception:
+    pass  # Fall back to basic operation below
+result = basic_operation()
 
 ---
 
