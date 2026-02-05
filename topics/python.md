@@ -6,6 +6,33 @@ Patterns, gotchas, and solutions for Python development.
 
 ## Testing with pytest
 
+### SQLAlchemy Lazy Connection Loading
+
+**Problem:** SQLAlchemy lazy-loads database connections. Tests using `session()` context manager pass even with invalid database URLs because no actual connection is made until a query executes.
+
+**Symptom:** Test expects connection failure but passes silently:
+```python
+# WRONG - passes even with invalid URL
+async def test_session_connection_fails(self, svc_configured):
+    with pytest.raises(Exception):
+        async with svc_configured.session() as session:
+            pass  # No query = no connection = no failure
+```
+
+**Solution:** Execute a query to force actual connection:
+```python
+# CORRECT - forces connection attempt
+async def test_session_connection_fails(self, svc_configured):
+    from sqlalchemy import text
+    with pytest.raises(Exception):  # OSError, ConnectionRefusedError, etc.
+        async with svc_configured.session() as session:
+            await session.execute(text("SELECT 1"))  # Forces connection
+```
+
+**Key insight:** SQLAlchemy's `create_async_engine()` doesn't connect on creation. The connection pool creates connections lazily on first query. This is efficient for production but can hide test issues.
+
+---
+
 ### Coverage Memory Issue
 
 **Problem:** `pytest --cov` can use 15-50GB RAM on large codebases.
@@ -154,29 +181,29 @@ def mock_redis():
     return mock
 ```
 
-### PySide6 Segfaults on Python 3.12
+### PySide6 Segfaults on Python 3.10+
 
-**Problem:** Tests involving Qt signal/slot connections segfault on Python 3.12 (not 3.11).
+**Problem:** Tests involving Qt signal/slot connections segfault on Python 3.10+ in CI environments.
 
-**Symptom:** `Fatal Python error: Segmentation fault` when connecting to signals and emitting them.
+**Symptom:** `Fatal Python error: Segmentation fault` when connecting to signals and emitting them, particularly with QTimer signals.
 
-**Root cause:** PySide6 and Python 3.12 have compatibility issues with certain signal patterns.
+**Root cause:** PySide6 and Python 3.10+ have compatibility issues with certain signal patterns, especially in headless CI environments. The issue affects 3.10, 3.11, and 3.12.
 
-**Solution:** Skip affected tests on Python 3.12:
+**Solution:** Skip affected tests on Python 3.10+:
 
 ```python
 import sys
 import pytest
 
 @pytest.mark.skipif(
-    sys.version_info >= (3, 12),
-    reason="PySide6 segfault on Python 3.12 - Qt signal/slot issue",
+    sys.version_info >= (3, 10),
+    reason="PySide6 segfault in CI - QTimer signal connection issue",
 )
 def test_signal_emission(self, qapp, ...):
     # Test that connects to signal and emits
     signal_handler = MagicMock()
     widget.some_signal.connect(signal_handler)
-    widget.do_something()  # Segfaults on 3.12
+    widget.do_something()  # Segfaults on 3.10+
     signal_handler.assert_called_once()
 ```
 
@@ -1165,7 +1192,7 @@ def test_client_protocol():
 
 ---
 
-*Last updated: 2026-02-02*
+*Last updated: 2026-02-04*
 
 ---
 

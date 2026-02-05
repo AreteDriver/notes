@@ -126,6 +126,30 @@ ruff check . --fix
 ruff format .
 ```
 
+### Ruff Version Mismatch
+
+**Problem:** Local ruff version differs from CI, causing "Would reformat" failures even after running `ruff format .` locally.
+
+**Symptom:** CI fails with formatting errors on files you just formatted. Different ruff versions have slightly different formatting rules.
+
+**Solution:** Keep local ruff version in sync with CI:
+```bash
+# Check versions
+ruff --version           # Local
+# CI typically uses latest via pip install ruff
+
+# Upgrade local (if using pipx)
+pipx upgrade ruff
+
+# Or reinstall
+pip install --upgrade ruff
+```
+
+**Pattern:** When CI uses `pip install ruff` without pinning, it gets the latest. If your local is behind, formatting will differ. Either:
+1. Keep local ruff updated (`pipx upgrade ruff` regularly)
+2. Pin ruff version in CI to match local
+3. Add ruff version to pyproject.toml dev deps and install from there
+
 ---
 
 ## Dependabot Management
@@ -510,4 +534,4 @@ Rule: Never include framework entry points in coverage paths.
 
 ---
 
-*Last updated: 2026-01-28*
+*Last updated: 2026-02-04*

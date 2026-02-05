@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-04 | CI/CD Audit Complete: All 6 flagship repos green (Argus_Overview, BenchGoblins, EVE_Gatekeeper, Gorgon, G13_Linux, RedOPS). 9308 tests passing total. Fixed PySide6 skipif (3.10+), SQLAlchemy lazy connection test, Pydantic alias constructor, ruff version mismatch. Created 7 private repos for orphaned local projects. Cleaned projects folder (58→47 dirs). Committed and pushed all uncommitted changes across 19 repos |
 | 2026-02-02 | Argus_Overview v3.0.3: Test coverage 93%→94%. alerts.py 100%, parser.py 99%, linux.py 97%, intel_tab 96%, main_tab 93%, main_window 90%. 1827 tests passing. Tagged and released |
 | 2026-02-02 | Argus_Overview: intel_tab.py coverage 91%→96%. Added 7 tests for _update_log_dir_label, _add_channel (QInputDialog), _remove_channel, _show_context_menu. Fixed channel selection test (lowercase matching). 1808 tests passing |
 | 2026-02-02 | Argus_Overview v3.0.2: Unified version strings across UI (__version__ from package). Fixed CI build failures (xvfb-run, COLLECT, removed redundant workflow). Verified AppImage launch. Archived Windows repo. PyPI + GitHub release with all artifacts |
@@ -253,6 +254,12 @@ Chronological record of work sessions.
 | PyInstaller + pynput "failed to acquire X connection" in CI | pynput imports X11 at module scan time. Wrap build with `xvfb-run -a` to provide virtual display during analysis |
 | PyInstaller spec creates single exe but script expects directory | AppImage packaging needs directory structure. Use COLLECT in spec file: `exe = EXE(..., [])` then `coll = COLLECT(exe, a.binaries, ...)` |
 | Version strings out of sync across UI | Hardcoded version in window title, tray, logs diverges from pyproject.toml. Import `__version__` from package and use f-strings: `f"App v{__version__}"` |
+| SQLAlchemy session() succeeds without connecting | SQLAlchemy lazy-loads connections. `session()` context manager succeeds even with invalid DB URL. Must execute query (e.g., `session.execute(text("SELECT 1"))`) to trigger actual connection and failure |
+| Pydantic alias field in constructor | `Field(..., alias="json")` with `populate_by_name=True` — use field name (`json_str=`) in constructor, not alias (`json=`). Mypy and runtime both need field name |
+| PySide6 CI segfault on Python 3.10+ | QTimer signal connections cause segfault in CI on Python 3.10+, not just 3.12. Extend skipif: `sys.version_info >= (3, 10)` |
+| ruff version mismatch local vs CI | Local ruff 0.14.x vs CI ruff 0.15.x causes "Would reformat" failures. Run `pipx upgrade ruff` before pushing to match CI version |
+| GitHub archived repo blocks push | Push fails with "repository was archived so it is read-only". Run `gh repo unarchive owner/repo --yes` first |
+| gh repo create fails on existing remote | If origin remote already exists, `gh repo create --source=. --push` fails. Remove remote or create repo separately and `git push -u origin main` |
 
 ---
 
@@ -292,4 +299,4 @@ gh run list --json conclusion
 
 ---
 
-*Last updated: 2026-02-02 (Session 17)*
+*Last updated: 2026-02-04 (Session 18)*
