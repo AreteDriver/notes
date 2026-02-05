@@ -76,6 +76,7 @@ Chronological record of work sessions.
 ## Wins Board
 
 | Date | Win |
+| 2026-02-04 | Dependabot Security Sweep: BenchGoblins — Next.js 14→16.1.6, ESLint 8→9 flat config migration, tar/glob/brace-expansion overrides (7 alerts → 0). Chefwise — fast-xml-parser override in root + functions (2 alerts → 0). All repos now 0 open Dependabot alerts |
 | 2026-02-04 | CodeQL Security Scan Cleanup: Fixed all high/medium severity alerts across 3 repos. G13_Linux — 8 empty-except patterns documented. Gorgon — path injection fix (filename sanitization), URL validation (urlparse hostname check), empty-excepts documented, unnecessary lambda removed. RedOPS — empty-excepts documented, ineffectual statement fixed. Closed PR #39 (Gorgon security) after direct main commit |
 | 2026-02-04 | CI/CD Audit Complete: All 6 flagship repos green (Argus_Overview, BenchGoblins, EVE_Gatekeeper, Gorgon, G13_Linux, RedOPS). 9308 tests passing total. Fixed PySide6 skipif (3.10+), SQLAlchemy lazy connection test, Pydantic alias constructor, ruff version mismatch. Created 7 private repos for orphaned local projects. Cleaned projects folder (58→47 dirs). Committed and pushed all uncommitted changes across 19 repos |
 | 2026-02-02 | Argus_Overview v3.0.3: Test coverage 93%→94%. alerts.py 100%, parser.py 99%, linux.py 97%, intel_tab 96%, main_tab 93%, main_window 90%. 1827 tests passing. Tagged and released |
@@ -264,6 +265,8 @@ Chronological record of work sessions.
 | CodeQL empty-except alert (py/empty-except) | Add explanatory comment: `except Exception: pass  # Reason why silent catch is intentional`. Common valid cases: best-effort cleanup, optional feature loading, graceful degradation |
 | CodeQL path injection (py/path-injection) | Sanitize filenames: `safe_name = re.sub(r"[^a-zA-Z0-9_-]", "-", name)` then verify `filepath.resolve().is_relative_to(base_dir.resolve())` |
 | CodeQL URL substring sanitization (py/incomplete-url-substring-sanitization) | Don't use `"github.com" in url`. Use `urlparse(url).hostname in ("github.com", "raw.githubusercontent.com")` |
+| Next.js 16 removed `next lint` command | Use `eslint .` directly. Requires ESLint 9 flat config (`eslint.config.mjs`) with `typescript-eslint` for TS parsing |
+| Multiple package.json in monorepo need same override | Check all manifest paths in Dependabot alerts — root, functions/, mobile/, etc. each need their own overrides |
 
 ---
 
